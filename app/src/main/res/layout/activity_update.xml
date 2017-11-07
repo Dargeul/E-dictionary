@@ -49,23 +49,44 @@
                 android:textSize="20dp"
                 android:hint="诸葛亮"/>
         </LinearLayout>
-        <LinearLayout
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal">-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:textSize="20dp"-->
+                <!--android:text="势力"/>-->
+            <!--<EditText-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:textSize="20dp"-->
+                <!--android:hint="蜀国"/>-->
+        <!--</LinearLayout>-->
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="势力"/>
-            <EditText
+            <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:hint="蜀国"/>
-        </LinearLayout>
+                android:text="魏"
+                android:textSize="18sp"/>
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="蜀"
+                android:textSize="18sp"/>
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="吴"
+                android:textSize="18sp"/>
+        </RadioGroup>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
