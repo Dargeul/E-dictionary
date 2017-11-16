@@ -88,25 +88,43 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:textSize="20sp"
+                android:layout_gravity="center_vertical"
                 android:text="生卒"/>
-                <TextView
-                    android:id="@+id/start"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:textSize="20sp"
-                    android:text="700"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:text="-"/>
-                <TextView
-                    android:id="@+id/end"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:text="769"/>
+
+            <!--同样在这里有两种实现方式，用对话框可能会比较麻烦，所以就用来picker，喜欢哪种就哪种-->
+                <!--<TextView-->
+                    <!--android:id="@+id/start"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="20dp"-->
+                    <!--android:textSize="20sp"-->
+                    <!--android:text="700"/>-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textSize="20sp"-->
+                    <!--android:text="-"/>-->
+                <!--<TextView-->
+                    <!--android:id="@+id/end"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textSize="20sp"-->
+                    <!--android:text="769"/>-->
+
+            <NumberPicker
+                android:id="@+id/start"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_gravity="center_vertical"
+                android:text="-"/>
+            <NumberPicker
+                android:id="@+id/end"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"/>
 
         </LinearLayout>
         <LinearLayout
