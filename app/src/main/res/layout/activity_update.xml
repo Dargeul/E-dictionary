@@ -8,14 +8,6 @@
     tools:context="com.example.gypc.e_dictionary.DetailActivity">
 
     <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@mipmap/empty_star"
-        app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/shape"
-        app:layout_constraintBottom_toBottomOf="@+id/Avatar"/>
-
-    <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:src="@mipmap/example"
@@ -49,23 +41,6 @@
                 android:textSize="20dp"
                 android:hint="诸葛亮"/>
         </LinearLayout>
-        <!--<LinearLayout-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="20dp"-->
-                <!--android:textSize="20dp"-->
-                <!--android:text="势力"/>-->
-            <!--<EditText-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="20dp"-->
-                <!--android:textSize="20dp"-->
-                <!--android:hint="蜀国"/>-->
-        <!--</LinearLayout>-->
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -112,14 +87,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:text="生卒"/>
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:hint="1223-1268"/>
+                <TextView
+                    android:id="@+id/start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="20sp"
+                    android:text="700"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="-"/>
+                <TextView
+                    android:id="@+id/end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="769"/>
+
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
