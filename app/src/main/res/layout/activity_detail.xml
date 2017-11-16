@@ -15,6 +15,14 @@
         android:src="@mipmap/edit"/>
 
     <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@mipmap/empty_star"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/shape"
+        app:layout_constraintBottom_toBottomOf="@+id/Avatar"/>
+
+    <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:src="@mipmap/example"
@@ -27,6 +35,8 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Avatar"
         android:id="@+id/ListOfDetails">
     </ListView>
