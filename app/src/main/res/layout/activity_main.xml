@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.example.gypc.e_dictionary.MainActivity">
    <!--搜索按钮-->
     <ImageView
@@ -12,16 +14,18 @@
         android:id="@+id/Searching"
         android:src="@mipmap/search"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBaseline_creator="@+id/SearchString"/>
+        app:layout_constraintBaseline_creator="@+id/SearchString"
+        tools:layout_editor_absoluteY="0dp" />
     <!--搜索框-->
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/SearchString"
         android:hint="请输入人物姓名"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/Searching"/>
+        app:layout_constraintRight_toLeftOf="@+id/Searching"
+        tools:layout_editor_absoluteY="0dp" />
 
     <!--存放人物的RecyclerView，id是ListOfFigures-->
     <android.support.v7.widget.RecyclerView
@@ -31,7 +35,8 @@
         android:layout_margin="20dp"
         android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@+id/SearchString"
-        android:id="@+id/ListOfFigures"/>
+        android:id="@+id/ListOfFigures"
+        tools:layout_editor_absoluteX="0dp" />
 
     <!--存放收藏夹人物的RecyclerView，其条目样式可用figure.xml-->
     <android.support.v7.widget.RecyclerView
@@ -39,17 +44,39 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         app:layout_constraintTop_toBottomOf="@+id/SearchString"
-        android:id="@+id/ListOfCollectors"/>
+        android:id="@+id/ListOfCollectors"
+        tools:layout_editor_absoluteX="0dp" />
 
     <!--悬浮按钮，添加功能-->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/AddingFloatButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/menu"
-        android:layout_margin="10dp"
-        app:backgroundTint="#FFFFFF"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/AddingFloatButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@mipmap/menu"-->
+        <!--android:layout_margin="10dp"-->
+        <!--app:backgroundTint="#FFFFFF"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent" />-->
+     <com.getbase.floatingactionbutton.FloatingActionsMenu
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         app:layout_constraintRight_toRightOf="parent"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:fab_labelsPosition="left"
+         app:fab_labelStyle="@style/menu_labels_style"
+         >
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addPersonBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_title="添加人物"
+            />
+         <com.getbase.floatingactionbutton.FloatingActionButton
+             android:id="@+id/switchToCollectorBtn"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             app:fab_title="收藏夹"
+             />
+     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </android.support.constraint.ConstraintLayout>
