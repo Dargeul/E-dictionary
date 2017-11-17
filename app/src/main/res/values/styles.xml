@@ -13,4 +13,7 @@
         <item name="android:background">@drawable/fab_label_bg</item>
     </style>
 
+    <style name="yearTextViewStyle">
+        <item name="android:background">@drawable/textview_bottom_border</item>
+    </style>
 </resources>
