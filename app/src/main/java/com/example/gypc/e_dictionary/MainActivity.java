@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 // 测试代码，在Update页面返回后提取数据
                 Bundle bundle = dataIntent.getExtras();
                 int personId = bundle.getInt("personId");  // 人物在数据库中Id
+                int avatarIndex = bundle.getInt("avatarIndex");  // 头像编号
                 String name = bundle.getString("name");  // 人物名字
                 String country = bundle.getString("country");  // 人物国籍
                 String nickName = bundle.getString("nickName");  // 人物称号
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String msg = "";
                 msg += "personId: " + String.valueOf(personId) + "\n";
+                msg += "avatarIndex: " + String.valueOf(avatarIndex) + '\n';
                 msg += "name: " + name + "\n";
                 msg += "country: " + country + "\n";
                 msg += "nickName: " + nickName + "\n";

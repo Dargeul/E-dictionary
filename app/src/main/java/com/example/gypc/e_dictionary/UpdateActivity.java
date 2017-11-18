@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import android.widget.TextView;
  */
 
 public class UpdateActivity extends AppCompatActivity {
+    private ImageView avatarImageView;
     private EditText nameEditText;
     private EditText nickNameEditText;
     private EditText birthplaceEditText;
@@ -29,6 +31,7 @@ public class UpdateActivity extends AppCompatActivity {
     private NumberPicker dialogYearPicker;
     private Button confirmBtn;
     private RadioGroup countryRadioGroup;
+    private int avatarIndex;
 
     private final int START_YEAR = 0;
     private final int END_YEAR = 1;
@@ -39,6 +42,7 @@ public class UpdateActivity extends AppCompatActivity {
 
     private boolean toAdd;
     public static final int OP_SUCCESS = 1;
+    public static final int AVATAR_PICKER_REQUEST_CODE = 2;
     private int personId;
 
 
@@ -48,6 +52,16 @@ public class UpdateActivity extends AppCompatActivity {
 
         initData();
         initPage();
+    }
+
+    @Override
+    protected void onActivityResult(int reqCode, int resultCode, Intent dataIntent) {
+        if (reqCode == AVATAR_PICKER_REQUEST_CODE) {
+            if (resultCode == UpdateAvatorActivity.PICK_OK) {
+                avatarIndex = dataIntent.getExtras().getInt("avatarIndex");
+                avatarImageView.setImageResource(ImageAdapter.mThumIds[avatarIndex]);
+            }
+        }
     }
 
     private void showYearDialog(final int flag) {
@@ -148,6 +162,7 @@ public class UpdateActivity extends AppCompatActivity {
             return;
         }
         Bundle bundle = new Bundle();
+        bundle.putInt("avatarIndex", avatarIndex);
         bundle.putString("name", name);
         switch (countryRadioGroup.getCheckedRadioButtonId()) {
             case R.id.weiRadioBtn:
@@ -177,6 +192,8 @@ public class UpdateActivity extends AppCompatActivity {
     private void initData() {
         for (int i = 0; i <= 500; i++)
             years[i] = String.valueOf(i);
+        avatarIndex = 6;
+        avatarImageView = (ImageView)findViewById(R.id.Avatar);
         nameEditText = (EditText)findViewById(R.id.nameEditText);
         countryRadioGroup = (RadioGroup)findViewById(R.id.countryRadioGroup);
         nickNameEditText = (EditText)findViewById(R.id.nickNameEditText);
@@ -184,6 +201,13 @@ public class UpdateActivity extends AppCompatActivity {
         startYear = (TextView)findViewById(R.id.startYear);
         endYear = (TextView)findViewById(R.id.endYear);
         confirmBtn = (Button)findViewById(R.id.confirmBtn);
+
+        avatarImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToPagePickerPage();
+            }
+        });
 
         startYear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,12 +231,19 @@ public class UpdateActivity extends AppCompatActivity {
         });
     }
 
+    private void navigateToPagePickerPage() {
+        Intent intent = new Intent(UpdateActivity.this, UpdateAvatorActivity.class);
+        startActivityForResult(intent, AVATAR_PICKER_REQUEST_CODE);
+    }
+
     private void initPage() {
         try {
             Bundle dataBundle = getIntent().getExtras();
             toAdd = dataBundle.getBoolean("toAdd");
             if (!toAdd) {
                 personId = dataBundle.getInt("personId");
+                avatarIndex = dataBundle.getInt("avatarIndex");
+                avatarImageView.setImageResource(ImageAdapter.mThumIds[avatarIndex]);
                 nameEditText.setText(dataBundle.getString("name"));
                 String country = dataBundle.getString("country");
                 switch (country) {

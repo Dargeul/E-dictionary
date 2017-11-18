@@ -12,7 +12,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -20,7 +19,6 @@
         <activity android:name=".DetailActivity">
             <intent-filter>
                 <action android:name="myDetailActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -28,10 +26,17 @@
         <activity android:name=".UpdateActivity">
             <intent-filter>
                 <action android:name="myUpdateActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".UpdateAvatorActivity">
+            <intent-filter>
+                <action android:name="myUpdateAvatorActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
