@@ -8,10 +8,10 @@
     tools:context="com.example.gypc.e_dictionary.DetailActivity">
 
     <ImageView
+        android:id="@+id/Avatar"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:src="@mipmap/example"
-        android:id="@+id/Avatar"
+        android:src="@drawable/avatar6"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 
