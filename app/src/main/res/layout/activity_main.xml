@@ -14,8 +14,7 @@
         android:id="@+id/Searching"
         android:src="@mipmap/search"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBaseline_creator="@+id/SearchString"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintBaseline_creator="@+id/SearchString" />
     <!--搜索框-->
     <EditText
         android:layout_width="0dp"
@@ -24,8 +23,7 @@
         android:hint="请输入人物姓名"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/Searching"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintRight_toLeftOf="@+id/Searching" />
 
     <!--存放人物的RecyclerView，id是ListOfFigures-->
     <android.support.v7.widget.RecyclerView
@@ -35,8 +33,7 @@
         android:layout_margin="20dp"
         android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@+id/SearchString"
-        android:id="@+id/ListOfFigures"
-        tools:layout_editor_absoluteX="0dp" />
+        android:id="@+id/ListOfFigures"/>
 
     <!--存放收藏夹人物的RecyclerView，其条目样式可用figure.xml-->
     <android.support.v7.widget.RecyclerView
@@ -44,8 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         app:layout_constraintTop_toBottomOf="@+id/SearchString"
-        android:id="@+id/ListOfCollectors"
-        tools:layout_editor_absoluteX="0dp" />
+        android:id="@+id/ListOfCollectors" />
 
     <!--悬浮按钮，添加功能-->
     <!--<android.support.design.widget.FloatingActionButton-->
