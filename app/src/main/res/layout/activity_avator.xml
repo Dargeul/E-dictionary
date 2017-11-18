@@ -7,24 +7,13 @@
     android:layout_margin="10dp"
     tools:context="com.example.gypc.e_dictionary.DetailActivity">
 
-    <Button
-        android:id="@+id/using"
-        android:layout_width="64dp"
-        android:layout_height="36dp"
-        android:text="使用"
-        android:background="#9CD029"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:layout_margin="10dp"
-        app:layout_constraintRight_toRightOf="parent"/>
 
     <GridView
-        app:layout_constraintTop_toBottomOf="@+id/using"
+        android:id="@+id/listOfAvatars"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:id="@+id/listOfAvators"
-        android:numColumns="4"
+        android:numColumns="3"
         android:verticalSpacing="2dp"
         android:horizontalSpacing="2dp"
         android:gravity="center"/>
