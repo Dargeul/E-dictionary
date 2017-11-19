@@ -15,7 +15,6 @@ import java.util.ArrayList;
  */
 
 public class PersonDBDao {
-    private static PersonDBDao instance;
 
     private MyDBHelper myDBHelper;
     private Cursor cursor;
@@ -25,28 +24,32 @@ public class PersonDBDao {
     public static final int CANNOT_ADD_PERSON_CODE = -1;
 
 
-    private PersonDBDao(Context context) {
+    public PersonDBDao(Context context) {
         try {
             myDBHelper = new MyDBHelper(context);
         } catch (Exception e) {
-            Log.e("PersonDBDao", "cstr", e);
+            Log.e("PersonDBDao", "constructor", e);
         }
     }
 
-    public static PersonDBDao getInstance(Context context) {
-        if (instance == null)
-            instance = new PersonDBDao(context);
-        return instance;
-    }
-
     private boolean personIdExists(int personId) {
-        SQLiteDatabase db = myDBHelper.getReadableDatabase();
-        cursor = db.query(MyDBHelper.TABLE_NAME,
-                new String[]{"PersonId"},
-                "PersonId = ?",
-                new String[]{ String.valueOf(personId) },
-                null, null, null);
-        return cursor.getCount() > 0;
+        SQLiteDatabase db = null;
+        try {
+            db = myDBHelper.getReadableDatabase();
+            cursor = db.query(MyDBHelper.TABLE_NAME,
+                    new String[]{"PersonId"},
+                    "PersonId = ?",
+                    new String[]{ String.valueOf(personId) },
+                    null, null, null);
+            return cursor.getCount() > 0;
+        } catch (Exception e) {
+            Log.e("PersonDBDao", "personIdExists", e);
+            return false;
+        } finally {
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
     }
 
     private int queryPersonIdByName(String personName) {
@@ -92,15 +95,13 @@ public class PersonDBDao {
                     " '" + dataBundle.getString("nickName")   + "', " +
                     "  " + dataBundle.getInt("startYear")     + ", " +
                     "  " + dataBundle.getInt("endYear")       + ", " +
-                    " '" + dataBundle.getString("birthplace") + "', " +
-                    ")");
-
+                    " '" + dataBundle.getString("birthplace") + "')");
 
             db.setTransactionSuccessful();
 
             return queryPersonIdByName(personName);
         } catch (Exception e) {
-            Log.e("PersonDBDao", "initData ERROR: ", e);
+            Log.e("PersonDBDao", "addPerson ERROR: ", e);
             return CANNOT_ADD_PERSON_CODE;
         }
     }
@@ -171,14 +172,14 @@ public class PersonDBDao {
 
             return resultList;
         } catch (Exception e) {
-            Log.e("PersonDBDao", "queryPersons ERROR: ", e);
+            Log.e("PersonDBDao", "getPersons ERROR: ", e);
             return null;
         }
     }
 
     private class MyDBHelper extends SQLiteOpenHelper {
         private static final int DB_VERSION = 1;
-        private static final String DB_NAME = "e_dictionary.db";
+        private static final String DB_NAME = "e_dictionary_person.db";
         public static final String TABLE_NAME = "Persons";
         public final String[] TABLE_COLS = new String[]{ "PersonId", "AvatarIndex", "Name", "Country", "NickName", "StartYear", "EndYear", "Birthplace" };
 
@@ -215,6 +216,11 @@ public class PersonDBDao {
             } catch (Exception e) {
                 Log.e("MyDBHelper", "upgrade table ERROR: ", e);
             }
+        }
+
+        @Override
+        public synchronized void close() {
+            super.close();
         }
     }
 }
