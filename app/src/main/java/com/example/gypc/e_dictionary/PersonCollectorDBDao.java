@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by XUJIJUN on 2017/11/19.
@@ -15,21 +16,49 @@ import java.util.ArrayList;
 
 public class PersonCollectorDBDao {
 
-    private MyDBHelper myDBHelper;
+    private AtomicInteger mDBOpenCounter = new AtomicInteger();
+    private SQLiteDatabase mDataBase;
     private Cursor cursor;
 
-    public PersonCollectorDBDao(Context context) {
-        try {
-            myDBHelper = new MyDBHelper(context);
-        } catch (Exception e) {
-            Log.e("PersonCollectorDBDao", "constructor", e);
+    private static PersonCollectorDBHelper myDBHelper;
+    private static PersonCollectorDBDao instance;
+
+    private PersonCollectorDBDao() {}
+
+    public static PersonCollectorDBDao getInstance(Context context) {
+        myDBHelper = PersonCollectorDBHelper.getInstance(context);
+        if (instance == null) {
+            synchronized (PersonDBDao.class) {
+                if (instance == null) {
+                    instance = new PersonCollectorDBDao();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private SQLiteDatabase getDatabase() {
+        if (mDBOpenCounter.incrementAndGet() == 1 || mDataBase == null) {
+            mDataBase = myDBHelper.getWritableDatabase();
+        }
+        return mDataBase;
+    }
+
+    private void closeDatabase() {
+        if (mDBOpenCounter.decrementAndGet() == 0) {
+            mDataBase.close();
         }
     }
 
+    public void closeDBConnection() {
+        myDBHelper.close();
+    }
+
+
     private boolean personIdExists(int personId) {
         try {
-            SQLiteDatabase db = myDBHelper.getReadableDatabase();
-            cursor = db.query(MyDBHelper.TABLE_NAME,
+            mDataBase = getDatabase();
+            cursor = mDataBase.query(PersonCollectorDBHelper.TABLE_NAME,
                     new String[]{"PersonId"},
                     "PersonId = ?",
                     new String[]{ String.valueOf(personId) },
@@ -38,48 +67,54 @@ public class PersonCollectorDBDao {
         } catch (Exception e) {
             Log.e("PersonCollectorDBDao", "personIdExists", e);
             return false;
+        } finally {
+            closeDatabase();
         }
     }
 
     public boolean addPersonId(int personId) {
         try {
-            if (personIdExists(personId)) {
-                Log.e("PersonCollectorDBDao", "addPerson error: person name exists");
-                return false;
-            }
-            SQLiteDatabase db = myDBHelper.getWritableDatabase();
+//            if (personIdExists(personId)) {
+//                Log.e("PersonCollectorDBDao", "addPerson error: person name exists");
+//                return false;
+//            }
+            mDataBase = getDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put("PersonId", personId);
-            db.insertOrThrow(MyDBHelper.TABLE_NAME, null, contentValues);
+            mDataBase.insertOrThrow(PersonCollectorDBHelper.TABLE_NAME, null, contentValues);
 
             return true;
         } catch (Exception e) {
             Log.e("PersonCollectorDBDao", "addPersonId ERROR: ", e);
             return false;
+        } finally {
+            closeDatabase();
         }
     }
 
     public boolean deletePersonId(int personId) {
         try {
-            if (!personIdExists(personId)) {
-                Log.e("PersonCollectorDBDao", "deletePersonId error: personId not exists");
-                return false;
-            }
-            SQLiteDatabase db = myDBHelper.getWritableDatabase();
-            db.delete(MyDBHelper.TABLE_NAME, "PersonId = ?", new String[] { String.valueOf(personId) });
+//            if (!personIdExists(personId)) {
+//                Log.e("PersonCollectorDBDao", "deletePersonId error: personId not exists");
+//                return false;
+//            }
+            mDataBase = getDatabase();
+            mDataBase.delete(PersonCollectorDBHelper.TABLE_NAME, "PersonId = ?", new String[] { String.valueOf(personId) });
 
             return true;
         } catch (Exception e) {
             Log.e("PersonCollectorDBDao", "deletePersonId", e);
             return false;
+        } finally {
+            closeDatabase();
         }
     }
 
     public ArrayList<Integer> getPersonIds() {
         try {
             ArrayList<Integer> personIdsList = new ArrayList<>();
-            SQLiteDatabase db = myDBHelper.getReadableDatabase();
-            cursor = db.query(myDBHelper.TABLE_NAME,
+            mDataBase = getDatabase();
+            cursor = mDataBase.query(myDBHelper.TABLE_NAME,
                     myDBHelper.TABLE_COLS,
                     null, null, null, null, null);
             if (cursor.getCount() > 0) {
@@ -92,44 +127,8 @@ public class PersonCollectorDBDao {
         } catch (Exception e) {
             Log.e("PersonCollectorDBDao", "getPersonIds", e);
             return null;
-        }
-    }
-
-    private class MyDBHelper extends SQLiteOpenHelper {
-        private static final int DB_VERSION = 1;
-        private static final String DB_NAME = "e_dictionary_person_id_collected.db";
-        public static final String TABLE_NAME = "PersonIdCollected";
-        public final String[] TABLE_COLS = new String[]{ "PersonId" };
-
-
-        public MyDBHelper(Context context) {
-            super(context, DB_NAME, null, DB_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (PersonId INTEGER PRIMARY KEY);";
-            try {
-                db.execSQL(sql);
-            } catch (Exception e) {
-                Log.e("MyDBHelper", "create table ERROR: ", e);
-            }
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            try {
-                String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
-                db.execSQL(sql);
-                onCreate(db);
-            } catch (Exception e) {
-                Log.e("MyDBHelper", "upgrade table ERROR: ", e);
-            }
-        }
-
-        @Override
-        public synchronized void close() {
-            super.close();
+        } finally {
+            closeDatabase();
         }
     }
 }

@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * Created by XUJIJUN on 2017/11/18.
@@ -16,27 +18,55 @@ import java.util.ArrayList;
 
 public class PersonDBDao {
 
-    private MyDBHelper myDBHelper;
-    private Cursor cursor;
+    private AtomicInteger mDBOpenCounter = new AtomicInteger();
+    private SQLiteDatabase mDataBase;
 
+//    private Context mContext;
+//    private ReadWriteLock myLock;
+    private Cursor cursor;
+//    public static final int CANNOT_ADD_PERSON_CODE = -1;
     private final int NO_PERSON_QUERY_RESULT_CODE = -1;
 
-    public static final int CANNOT_ADD_PERSON_CODE = -1;
+    private static PersonDBHelper myDBHelper;
+    private static PersonDBDao instance;
 
+    private PersonDBDao() {}
 
-    public PersonDBDao(Context context) {
-        try {
-            myDBHelper = new MyDBHelper(context);
-        } catch (Exception e) {
-            Log.e("PersonDBDao", "constructor", e);
+    public static PersonDBDao getInstance(Context context) {
+        myDBHelper = PersonDBHelper.getInstance(context);
+        if (instance == null) {
+            synchronized (PersonDBDao.class) {
+                if (instance == null) {
+                    instance = new PersonDBDao();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private SQLiteDatabase getDatabase() {
+        if (mDBOpenCounter.incrementAndGet() == 1 || mDataBase == null) {
+            mDataBase = myDBHelper.getWritableDatabase();
+        }
+        return mDataBase;
+    }
+
+    private void closeDatabase() {
+        if (mDBOpenCounter.decrementAndGet() == 0) {
+            mDataBase.close();
         }
     }
 
+    public void closeDBConnection() {
+        myDBHelper.close();
+    }
+
     private boolean personIdExists(int personId) {
-        SQLiteDatabase db = null;
+//        myLock.readLock().lock();
+//        SQLiteDatabase db = null;
         try {
-            db = myDBHelper.getReadableDatabase();
-            cursor = db.query(MyDBHelper.TABLE_NAME,
+            mDataBase = getDatabase();
+            cursor = mDataBase.query(PersonDBHelper.TABLE_NAME,
                     new String[]{"PersonId"},
                     "PersonId = ?",
                     new String[]{ String.valueOf(personId) },
@@ -46,16 +76,19 @@ public class PersonDBDao {
             Log.e("PersonDBDao", "personIdExists", e);
             return false;
         } finally {
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
+//            if (db != null && db.isOpen())
+//                db.close();
+//            myLock.readLock().unlock();
+            closeDatabase();
         }
     }
 
-    private int queryPersonIdByName(String personName) {
+    public int queryPersonIdByName(String personName) {
+//        myLock.readLock().lock();
+//        SQLiteDatabase db = null;
         try {
-            SQLiteDatabase db = myDBHelper.getReadableDatabase();
-            cursor = db.query(myDBHelper.TABLE_NAME,
+            mDataBase = getDatabase();
+            cursor = mDataBase.query(myDBHelper.TABLE_NAME,
                                new String[]{ "PersonId" },
                                "Name = ?",
                                new String[]{ personName },
@@ -70,6 +103,11 @@ public class PersonDBDao {
         } catch (Exception e) {
             Log.e("PersonDBDao", "queryPersonIdByName", e);
             return NO_PERSON_QUERY_RESULT_CODE;
+        } finally {
+//            if (db != null && db.isOpen())
+//                db.close();
+//            myLock.readLock().unlock();
+            closeDatabase();
         }
     }
 
@@ -77,58 +115,11 @@ public class PersonDBDao {
         return queryPersonIdByName(personName) != NO_PERSON_QUERY_RESULT_CODE;
     }
 
-    public int addPerson(Bundle dataBundle) {
+    public boolean addPerson(Bundle dataBundle) {
+//        myLock.writeLock().lock();
+//        SQLiteDatabase db = null;
         try {
-            String personName = dataBundle.getString("name");
-            if (personNameExists(personName)) {
-                Log.e("PersonDBDao", "addPerson error: person name exists");
-                return CANNOT_ADD_PERSON_CODE;
-            }
-            SQLiteDatabase db = myDBHelper.getWritableDatabase();
-            db.beginTransaction();
-            db.execSQL("insert into " + myDBHelper.TABLE_NAME +
-                    " (AvatarIndex, Name, Country, NickName, StartYear, EndYear, Birthplace) " +
-                    "  values (" +
-                    "  " + dataBundle.getInt("avatarIndex")  + ", " +
-                    " '" + personName                          + "', " +
-                    " '" + dataBundle.getString("country")    + "', " +
-                    " '" + dataBundle.getString("nickName")   + "', " +
-                    "  " + dataBundle.getInt("startYear")     + ", " +
-                    "  " + dataBundle.getInt("endYear")       + ", " +
-                    " '" + dataBundle.getString("birthplace") + "')");
-
-            db.setTransactionSuccessful();
-
-            return queryPersonIdByName(personName);
-        } catch (Exception e) {
-            Log.e("PersonDBDao", "addPerson ERROR: ", e);
-            return CANNOT_ADD_PERSON_CODE;
-        }
-    }
-
-    public boolean deletePerson(int personId) {
-        try {
-            if (!personIdExists(personId)) {
-                Log.e("PersonDBDao", "deletePerson error: personId not exists");
-                return false;
-            }
-            SQLiteDatabase db = myDBHelper.getWritableDatabase();
-            db.delete(MyDBHelper.TABLE_NAME, "PersonId = ?", new String[] { String.valueOf(personId) });
-
-            return true;
-        } catch (Exception e) {
-            Log.e("PersonDBDao", "deletePerson", e);
-            return false;
-        }
-    }
-
-    public boolean updatePerson(int personId, Bundle dataBundle) {
-        try {
-            if (!personIdExists(personId)) {
-                Log.e("PersonDBDao", "updatePerson error: personId not exists");
-                return false;
-            }
-            SQLiteDatabase db = myDBHelper.getWritableDatabase();
+            mDataBase = getDatabase();
 
             ContentValues contentValues = new ContentValues();
             contentValues.put("AvatarIndex", dataBundle.getInt("avatarIndex"));
@@ -138,34 +129,90 @@ public class PersonDBDao {
             contentValues.put("StartYear", dataBundle.getInt("startYear"));
             contentValues.put("EndYear", dataBundle.getInt("endYear"));
             contentValues.put("Birthplace", dataBundle.getString("birthplace"));
-            db.update(MyDBHelper.TABLE_NAME, contentValues, "PersonId = ?", new String[] { String.valueOf(personId) });
+            mDataBase.insertOrThrow(PersonDBHelper.TABLE_NAME, null, contentValues);
+
+            return true;
+        } catch (Exception e) {
+            Log.e("PersonDBDao", "addPerson ERROR: ", e);
+            return false;
+        } finally {
+//            if (db != null && db.isOpen())
+//                db.close();
+//            myLock.writeLock().unlock();
+            closeDatabase();
+        }
+    }
+
+    public boolean deletePerson(int personId) {
+//        myLock.writeLock().lock();
+//        SQLiteDatabase db = null;
+        try {
+            mDataBase = getDatabase();
+            mDataBase.delete(PersonDBHelper.TABLE_NAME, "PersonId = ?", new String[] { String.valueOf(personId) });
+
+            return true;
+        } catch (Exception e) {
+            Log.e("PersonDBDao", "deletePerson", e);
+            return false;
+        } finally {
+//            if (db != null && db.isOpen())
+//                db.close();
+//            myLock.writeLock().unlock();
+            closeDatabase();
+        }
+    }
+
+    public boolean updatePerson(int personId, Bundle dataBundle) {
+//        myLock.writeLock().lock();
+//        SQLiteDatabase db = null;
+        try {
+            mDataBase = getDatabase();
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("AvatarIndex", dataBundle.getInt("avatarIndex"));
+            contentValues.put("Name", dataBundle.getString("name"));
+            contentValues.put("Country", dataBundle.getString("country"));
+            contentValues.put("NickName", dataBundle.getString("nickName"));
+            contentValues.put("StartYear", dataBundle.getInt("startYear"));
+            contentValues.put("EndYear", dataBundle.getInt("endYear"));
+            contentValues.put("Birthplace", dataBundle.getString("birthplace"));
+            mDataBase.update(PersonDBHelper.TABLE_NAME, contentValues, "PersonId = ?", new String[] { String.valueOf(personId) });
 
             return true;
         }catch (Exception e) {
             Log.e("PersonDBDao", "updatePerson", e);
             return false;
+        } finally {
+//            if (db != null && db.isOpen())
+//                db.close();
+//            myLock.writeLock().unlock();
+            closeDatabase();
         }
     }
 
     public ArrayList<Person> getPersons() {
+//        myLock.readLock().lock();
+//        SQLiteDatabase db = null;
         try {
             ArrayList<Person> resultList = new ArrayList<>();
-            SQLiteDatabase db = myDBHelper.getReadableDatabase();
-            cursor = db.query(myDBHelper.TABLE_NAME,
+            mDataBase = getDatabase();
+            cursor = mDataBase.query(myDBHelper.TABLE_NAME,
                     myDBHelper.TABLE_COLS,
                     null, null, null, null, null);
 
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
-                    Person person = new Person();
-                    person.personId = cursor.getInt(0);
-                    person.avatarIndex = cursor.getInt(1);
-                    person.name = cursor.getString(2);
-                    person.country = cursor.getString(3);
-                    person.nickName = cursor.getString(4);
-                    person.startYear = cursor.getInt(5);
-                    person.endYear = cursor.getInt(6);
-                    person.birthplace = cursor.getString(7);
+                    Person person = new Person(
+                        cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5),
+                        cursor.getInt(6),
+                        cursor.getString(7)
+                    );
+
                     resultList.add(person);
                 }
             }
@@ -174,53 +221,11 @@ public class PersonDBDao {
         } catch (Exception e) {
             Log.e("PersonDBDao", "getPersons ERROR: ", e);
             return null;
-        }
-    }
-
-    private class MyDBHelper extends SQLiteOpenHelper {
-        private static final int DB_VERSION = 1;
-        private static final String DB_NAME = "e_dictionary_person.db";
-        public static final String TABLE_NAME = "Persons";
-        public final String[] TABLE_COLS = new String[]{ "PersonId", "AvatarIndex", "Name", "Country", "NickName", "StartYear", "EndYear", "Birthplace" };
-
-
-        public MyDBHelper(Context context) {
-            super(context, DB_NAME, null, DB_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
-                    "   PersonId INTEGER PRIMARY KEY   AUTOINCREMENT," +
-                    "   AvatarIndex    INTEGER   NOT NULL," +
-                    "   Name           TEXT      NOT NULL," +
-                    "   Country        TEXT      NOT NULL," +
-                    "   NickName       TEXT      NOT NULL," +
-                    "   StartYear      INTEGER   NOT NULL," +
-                    "   EndYear        INTEGER   NOT NULL," +
-                    "   Birthplace     TEXT      NOT NULL " +
-                    ");";
-            try {
-                db.execSQL(sql);
-            } catch (Exception e) {
-                Log.e("MyDBHelper", "create table ERROR: ", e);
-            }
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            try {
-                String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
-                db.execSQL(sql);
-                onCreate(db);
-            } catch (Exception e) {
-                Log.e("MyDBHelper", "upgrade table ERROR: ", e);
-            }
-        }
-
-        @Override
-        public synchronized void close() {
-            super.close();
+        } finally {
+//            if (db != null && db.isOpen())
+//                db.close();
+//            myLock.readLock().unlock();
+            closeDatabase();
         }
     }
 }
