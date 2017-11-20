@@ -47,4 +47,8 @@ public class AppContext extends Application {
     public PersonDBDao getPersonDBDao() {
         return personDBDao;
     }
+
+    public PersonCollectorDBDao getPersonCollectorDBDao() {
+        return personCollectorDBDao;
+    }
 }
