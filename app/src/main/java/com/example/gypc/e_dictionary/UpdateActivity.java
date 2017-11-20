@@ -46,6 +46,7 @@ public class UpdateActivity extends AppCompatActivity {
     public static final int OP_SUCCESS = 1;
     public static final int AVATAR_PICKER_REQUEST_CODE = 2;
     private int personId;
+    private String personName;
 
     private PersonDBDao personDBDao;
 
@@ -56,6 +57,12 @@ public class UpdateActivity extends AppCompatActivity {
 
         initData();
         initPage();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        personDBDao.closeDBConnection();
     }
 
     @Override
@@ -127,9 +134,11 @@ public class UpdateActivity extends AppCompatActivity {
 
     private void syncData(Bundle dataBundle) {
         if (toAdd) {
-            personId = personDBDao.addPerson(dataBundle);
-            if (personId == PersonDBDao.CANNOT_ADD_PERSON_CODE) {
+            if (!personDBDao.addPerson(dataBundle)) {
                 Log.e("UpdateActivity", "syncData error: cannot add person");
+                personId = -1;
+            } else {
+                personId = personDBDao.queryPersonIdByName(dataBundle.getString("name"));
             }
         } else {
             if (!personDBDao.updatePerson(personId, dataBundle)) {
@@ -186,8 +195,9 @@ public class UpdateActivity extends AppCompatActivity {
             showConfirmError("籍贯不能为空！");
             return;
         }
-        if (personDBDao.personNameExists(name)) {
-            showConfirmError("姓名已经存在！");
+        if (MainActivity.personNameExists(name)) {
+            if (toAdd || !name.equals(personName))
+                showConfirmError("姓名已经存在！");
             return;
         }
 
@@ -218,7 +228,7 @@ public class UpdateActivity extends AppCompatActivity {
     private void initData() {
         for (int i = 0; i <= 500; i++)
             years[i] = String.valueOf(i);
-        personDBDao = new PersonDBDao(this);
+        personDBDao = AppContext.getInstance().getPersonDBDao();
         avatarIndex = 6;
         avatarImageView = (ImageView)findViewById(R.id.Avatar);
         nameEditText = (EditText)findViewById(R.id.nameEditText);
@@ -271,7 +281,8 @@ public class UpdateActivity extends AppCompatActivity {
                 personId = dataBundle.getInt("personId");
                 avatarIndex = dataBundle.getInt("avatarIndex");
                 avatarImageView.setImageResource(ImageAdapter.mThumIds[avatarIndex]);
-                nameEditText.setText(dataBundle.getString("name"));
+                personName = dataBundle.getString("name");
+                nameEditText.setText(personName);
                 String country = dataBundle.getString("country");
                 switch (country) {
                     case "魏":
