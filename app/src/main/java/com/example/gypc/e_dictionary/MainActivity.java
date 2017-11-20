@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private static List<Person> PersonList;
     private BaseRecyclerViewAdapter adapter;
 
-
+    private PersonDBDao personDBDao;
+    private PersonCollectorDBDao personCollectorDBDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
         recycleView.setAdapter(adapter);
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Activity销毁时断开数据库连接
+        personDBDao.closeDBConnection();
+        personCollectorDBDao.closeDBConnection();
     }
 
     @Override
@@ -133,6 +142,12 @@ public class MainActivity extends AppCompatActivity {
 
         // 获取全局初始人物数组，获取收藏人物ID数组同理
         PersonList = AppContext.getInstance().getGlobalPersonsList();
+        personDBDao = AppContext.getInstance().getPersonDBDao();
+//       boolean personDBDao.deletePerson(int personId);  // 人物delete接口
+        personCollectorDBDao = AppContext.getInstance().getPersonCollectorDBDao();
+//        boolean personCollectorDBDao.addPersonId(int personId);  // 收藏
+//        boolean personCollectorDBDao.deletePersonId(int personId);  // 取消收藏
+
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // 当点击搜索按钮时触发该方法
