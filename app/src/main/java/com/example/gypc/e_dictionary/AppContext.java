@@ -1,7 +1,10 @@
 package com.example.gypc.e_dictionary;
 
 import android.app.Application;
+import android.os.Bundle;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -11,20 +14,34 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class AppContext extends Application {
 
-    private ReadWriteLock readWriteLock;
     private PersonDBDao personDBDao;
+    private PersonCollectorDBDao personCollectorDBDao;
     private static AppContext instance;
+    private ArrayList<Person> globalPersonsList;
+    private ArrayList<Integer> globalPersonIdsCollectedList;
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        readWriteLock = new ReentrantReadWriteLock(false);
-        personDBDao = PersonDBDao.getInstance(this, readWriteLock);
+        personDBDao = PersonDBDao.getInstance(this);
+        personCollectorDBDao = PersonCollectorDBDao.getInstance(this);
+        globalPersonsList = personDBDao.getPersons();
+        globalPersonIdsCollectedList = personCollectorDBDao.getPersonIds();
     }
 
     public static AppContext getInstance() {
         return instance;
+    }
+
+    // 获取全局初始人物数组
+    public List<Person> getGlobalPersonsList() {
+        return globalPersonsList;
+    }
+
+    // 获取收藏人物ID数组
+    public List<Integer> getGlobalPersonIdsCollectedList() {
+        return globalPersonIdsCollectedList;
     }
 
     public PersonDBDao getPersonDBDao() {
