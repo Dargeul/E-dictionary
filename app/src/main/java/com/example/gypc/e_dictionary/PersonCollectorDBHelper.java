@@ -51,4 +51,9 @@ public class PersonCollectorDBHelper extends SQLiteOpenHelper {
             Log.e("PersonCollectorDBHelper", "upgrade table ERROR: ", e);
         }
     }
+
+    @Override
+    public synchronized void close() {
+        super.close();
+    }
 }
