@@ -45,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     private ListView mListView;
-    private List<itemsArrayClass> PersonList = new ArrayList<>();
+
+    // test
+    private static List<Person> PersonList;
     private BaseRecyclerViewAdapter adapter;
 
 
@@ -120,14 +122,17 @@ public class MainActivity extends AppCompatActivity {
 //                bundle.putInt("startYear", 222);  // 人物生年
 //                bundle.putInt("endYear", 333);  // 人物卒年
 //                bundle.putString("birthplace", "浙江");  // 人物籍贯
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+
+        // 获取全局初始人物数组，获取收藏人物ID数组同理
+        PersonList = AppContext.getInstance().getGlobalPersonsList();
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // 当点击搜索按钮时触发该方法
@@ -178,39 +183,39 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    class itemsArrayClass {
+//    class Person {
+//
+//        int personId;
+//        String name;
+//        String country;
+//        String nickName;
+//        int endYear;
+//        int startYear;
+//        String birthplace;
+//
+//        Person(int personId, String name, String country, String nickName, int endYear, int startYear, String birthplace) {
+//            this.personId = personId;
+//            this.name = name;
+//            this.country = country;
+//            this.nickName = nickName;
+//            this.endYear = endYear;
+//            this.startYear = startYear;
+//            this.birthplace = birthplace;
+//        }
+//
+//
+//        public String getName() {
+//            return this.name;
+//        }
+//    }
+    public class BaseRecyclerViewAdapter extends BaseItemDraggableAdapter<Person,BaseViewHolder> {
 
-        int personId;
-        String name;
-        String country;
-        String nickName;
-        int endYear;
-        int startYear;
-        String birthplace;
-
-        itemsArrayClass(int personId, String name, String country, String nickName, int endYear, int startYear, String birthplace) {
-            this.personId = personId;
-            this.name = name;
-            this.country = country;
-            this.nickName = nickName;
-            this.endYear = endYear;
-            this.startYear = startYear;
-            this.birthplace = birthplace;
-        }
-
-
-        public String getName() {
-            return this.name;
-        }
-    }
-    public class BaseRecyclerViewAdapter extends BaseItemDraggableAdapter<itemsArrayClass,BaseViewHolder> {
-
-        public BaseRecyclerViewAdapter(int layoutResId, List<itemsArrayClass> data) {
+        public BaseRecyclerViewAdapter(int layoutResId, List<Person> data) {
             super(R.layout.figure, data);
         }
 
         @Override
-        protected void convert(final BaseViewHolder helper, final itemsArrayClass item) {
+        protected void convert(final BaseViewHolder helper, final Person item) {
             helper.setText(R.id.FigureName,item.getName());
             helper.getView(R.id.delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -226,6 +231,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
+    public static boolean personNameExists(String personName) {
+        for (int i = 0; i < PersonList.size(); i++) {
+            if (PersonList.get(i).getName().equals(personName))
+                return true;
+        }
+        return false;
+    }
 }
