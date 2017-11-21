@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -94,8 +95,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initData();
-        bindServiceConnection();
-        //musicListener();
         if (hasPermission == false) {
             vertifyStoragePermissions(MainActivity.this);
         }
@@ -107,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
         adapter.isFirstOnly(false);
         adapter.setDuration(500);
         recycleView.setAdapter(adapter);
+        bindServiceConnection();
+        musicListener();
     }
 
     @Override
