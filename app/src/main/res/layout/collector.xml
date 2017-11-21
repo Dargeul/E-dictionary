@@ -1,51 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="96dp"
-    android:layout_height="120dp"
-    android:orientation="vertical"
-    android:background="@drawable/bgforcollector"
-    android:layout_margin="4dp"
-    android:padding="4dp">
+    android:id="@+id/ll_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/Avatar"
-        android:layout_width="84dp"
-        android:layout_height="84dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/avatar0"/>
-
-    <View
-        android:layout_width="88dp"
-        android:layout_height="1dp"
-        android:layout_margin="4dp"
-        android:background="#BEBEBE"/>
-
-    <LinearLayout
+    <com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout
+        android:id="@+id/es"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
-        <TextView
-            android:id="@+id/FigureTitle"
-            android:textSize="12sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="胸有谋略" />
+        app:contentView="@+id/content"
+        app:rightMenuView="@+id/right">
 
-        <View
-            android:layout_width="0.5dp"
-            android:layout_height="8dp"
-            android:layout_margin="4dp" />
-        <TextView
-            android:id="@+id/FigureName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="#5E5E5E"
-            android:layout_gravity="start"
-            android:text="孙权" />
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="120dp"
+            android:layout_height="144dp"
+            android:orientation="vertical"
+            android:background="@drawable/bgforcollector"
+            android:layout_margin="4dp"
+            android:padding="4dp">
 
+            <ImageView
+                android:id="@+id/Avatar"
+                android:layout_width="108dp"
+                android:layout_height="108dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/avatar0"/>
+
+            <View
+                android:layout_width="102dp"
+                android:layout_height="1dp"
+                android:layout_margin="4dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#BEBEBE"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+                    <TextView
+                        android:id="@+id/FigureTitle"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="胸有谋略" />
+
+                    <View
+                        android:layout_width="0.5dp"
+                        android:layout_height="8dp"
+                        android:layout_margin="10dp" />
+                    <TextView
+                        android:id="@+id/FigureName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="#5E5E5E"
+                        android:layout_gravity="start"
+                        android:text="孙权" />
+                </LinearLayout>
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/right"
+            android:layout_width="70dp"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <Button
+                android:id="@+id/delete"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@mipmap/delete"
+                android:layout_marginRight="10dp"/>
+        </LinearLayout>
+    </com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout>
 </LinearLayout>
-
