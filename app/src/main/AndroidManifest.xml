@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.gypc.e_dictionary">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".AppContext"
         android:allowBackup="true"
@@ -46,6 +49,10 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".MusicService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
