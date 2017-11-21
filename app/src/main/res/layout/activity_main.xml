@@ -31,8 +31,17 @@
         android:id="@+id/ListOfFigures"
         app:layout_constraintTop_toBottomOf="@+id/searchView"
         android:paddingBottom="50dp"
+        android:visibility="visible"
     />
-
+    <android.support.v7.widget.RecyclerView
+        xmlns:android = "http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ListOfCollections"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:paddingBottom="50dp"
+        android:visibility="invisible"
+        />
 
     <!--存放收藏夹人物的RecyclerView，其条目样式可用figure.xml-->
     <!--<android.support.v7.widget.RecyclerView-->

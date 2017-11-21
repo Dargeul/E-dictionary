@@ -3,6 +3,7 @@ import android.app.SearchManager;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
@@ -40,28 +41,52 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton switchToCollectorBtn;
     public static final int ADDUSER_REQUEST_CODE = 1;
 
-    private String[] mStrs = {"aaa", "bbb", "ccc", "airsaid"};
+
     private SearchView mSearchView;
 
 
     private ListView mListView;
     private List<itemsArrayClass> PersonList = new ArrayList<>();
-    private BaseRecyclerViewAdapter adapter;
+    private List<itemsArrayClass> collectionsList = new ArrayList<>();
+    private PersonBaseRecyclerViewAdapter Personadapter;
+    private CollectionsBaseRecyclerViewAdapter collectionadapter;
+    private RecyclerView PersonrecycleView;
+    private RecyclerView collectionsrecycleView;
+    private int status = 0;
+    // 0 for persons view
+    // 1 for collections view
+    class itemsArrayClass {
+
+        int personId;
+        String name;
+        String country;
+        String nickName;
+        int endYear;
+        int startYear;
+        String birthplace;
+
+        itemsArrayClass(int personId, String name, String country, String nickName, int endYear, int startYear, String birthplace) {
+            this.personId = personId;
+            this.name = name;
+            this.country = country;
+            this.nickName = nickName;
+            this.endYear = endYear;
+            this.startYear = startYear;
+            this.birthplace = birthplace;
+        }
 
 
-
+        public String getName() {
+            return this.name;
+        }
+        public int getId() { return this.personId; }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initData();
-        RecyclerView recycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
-        adapter = new BaseRecyclerViewAdapter(R.layout.figure, PersonList);
-        recycleView.setLayoutManager(new LinearLayoutManager(this));
-        adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
-        adapter.isFirstOnly(false);
-        adapter.setDuration(500);
-        recycleView.setAdapter(adapter);
+        initList();
 
 
     }
@@ -100,7 +125,50 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    private void initList() {
+        PersonrecycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
+        Personadapter = new PersonBaseRecyclerViewAdapter(R.layout.figure, PersonList);
+        PersonrecycleView.setLayoutManager(new LinearLayoutManager(this));
+        Personadapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        Personadapter.isFirstOnly(false);
+        Personadapter.setDuration(500);
+        PersonrecycleView.setAdapter(Personadapter);
 
+
+
+        //database operation _ retrive data
+        PersonList.add(new itemsArrayClass(0, "孙权0", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(1, "孙权1", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(2, "孙权2", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(3, "孙权3", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(4, "孙权4", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(5, "孙权5", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(6, "孙权6", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(7, "孙权7", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(8, "孙权8", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(9, "孙权9", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(10, "孙权10", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(11, "孙权11", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(12, "孙权12", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(13, "孙权13", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(14, "孙权14", "吴", "阿权", 222, 333, "浙江"));
+        PersonList.add(new itemsArrayClass(15, "孙权15", "吴", "阿权", 222, 333, "浙江"));
+
+        collectionsrecycleView  = (RecyclerView) findViewById(R.id.ListOfCollections);
+        collectionadapter = new CollectionsBaseRecyclerViewAdapter(R.layout.collecitons, collectionsList);
+        collectionsrecycleView.setLayoutManager(new LinearLayoutManager(this));
+        collectionadapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
+        collectionadapter.isFirstOnly(false);
+        collectionadapter.setDuration(500);
+        collectionsrecycleView.setAdapter(collectionadapter);
+
+
+        collectionsList.add(new itemsArrayClass(0, "0孙123权", "吴", "阿权", 222, 333, "浙江"));
+        collectionsList.add(new itemsArrayClass(1, "1孙123权", "吴", "阿权", 222, 333, "浙江"));
+        collectionsList.add(new itemsArrayClass(2, "2孙123权", "吴", "阿权", 222, 333, "浙江"));
+        collectionsList.add(new itemsArrayClass(3, "3孙123权", "吴", "阿权", 222, 333, "浙江"));
+
+    }
     private void initData() {
         menuBtn = (FloatingActionsMenu)findViewById(R.id.menuBtn);
         addPersonBtn = (FloatingActionButton)findViewById(R.id.addPersonBtn);
@@ -120,14 +188,7 @@ public class MainActivity extends AppCompatActivity {
 //                bundle.putInt("startYear", 222);  // 人物生年
 //                bundle.putInt("endYear", 333);  // 人物卒年
 //                bundle.putString("birthplace", "浙江");  // 人物籍贯
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
+
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // 当点击搜索按钮时触发该方法
@@ -140,10 +201,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (!TextUtils.isEmpty(newText)){
-
-//                    mListView.setFilterText(newText);
+                    List<itemsArrayClass> temp = new ArrayList<itemsArrayClass>();
+                    for (itemsArrayClass item : PersonList) {
+                        String name  = item.getName();
+                        if (name.indexOf(newText) != -1) {
+                            temp.add(item);
+                            Log.e("filter", name);
+                        }
+                    }
+                    Personadapter.updateList(temp);
                 }else{
-//                    mListView.clearTextFilter();
+                    Personadapter.updateList(PersonList);
                 }
                 return false;
             }
@@ -176,37 +244,48 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, ADDUSER_REQUEST_CODE);  // 跳转到Update页面
             }
         });
+        switchToCollectorBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (status == 0) {
+                    mSearchView.setVisibility(View.INVISIBLE);
+                    PersonrecycleView.setVisibility(View.INVISIBLE);
+                    collectionsrecycleView.setVisibility(View.VISIBLE);
+                    collectionadapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
+                    collectionadapter.isFirstOnly(false);
+                    collectionadapter.setDuration(500);
+                    collectionsrecycleView.setAdapter(collectionadapter);
+                    switchToCollectorBtn.setTitle("人物列表");
+                    status = 1;
+                } else {
+                    mSearchView.setVisibility(View.VISIBLE);
+                    PersonrecycleView.setVisibility(View.VISIBLE);
+                    collectionsrecycleView.setVisibility(View.INVISIBLE);
+                    Personadapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+                    Personadapter.isFirstOnly(false);
+                    Personadapter.setDuration(500);
+                    PersonrecycleView.setAdapter(Personadapter);
+                    switchToCollectorBtn.setTitle("收藏夹");
+                    status = 0;
+                }
+            }
+        });
     }
 
-    class itemsArrayClass {
 
-        int personId;
-        String name;
-        String country;
-        String nickName;
-        int endYear;
-        int startYear;
-        String birthplace;
+    public class PersonBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<itemsArrayClass,BaseViewHolder> {
 
-        itemsArrayClass(int personId, String name, String country, String nickName, int endYear, int startYear, String birthplace) {
-            this.personId = personId;
-            this.name = name;
-            this.country = country;
-            this.nickName = nickName;
-            this.endYear = endYear;
-            this.startYear = startYear;
-            this.birthplace = birthplace;
-        }
-
-
-        public String getName() {
-            return this.name;
-        }
-    }
-    public class BaseRecyclerViewAdapter extends BaseItemDraggableAdapter<itemsArrayClass,BaseViewHolder> {
-
-        public BaseRecyclerViewAdapter(int layoutResId, List<itemsArrayClass> data) {
+        public PersonBaseRecyclerViewAdapter(int layoutResId, List<itemsArrayClass> data) {
             super(R.layout.figure, data);
+
+        }
+        public void updateList(List<itemsArrayClass> list){
+            Personadapter = new PersonBaseRecyclerViewAdapter(R.layout.figure, list);
+            PersonrecycleView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            Personadapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+            Personadapter.isFirstOnly(false);
+            Personadapter.setDuration(500);
+            PersonrecycleView.setAdapter(Personadapter);
         }
 
         @Override
@@ -215,9 +294,63 @@ public class MainActivity extends AppCompatActivity {
             helper.getView(R.id.delete).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // test delete item
-                    PersonList.remove(3);
-                    adapter.notifyItemRemoved(3);
+
+                    int i = 0;
+                    for (; i < PersonList.size(); i++) {
+                        if (PersonList.get(i).getId() == item.getId()) {
+                            break;
+                        }
+                    }
+                    PersonList.remove(i);
+                    Personadapter.notifyItemRemoved(i);
+                    Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                    EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
+                    easySwipeMenuLayout.resetStatus();
+                    helper.getView(R.id.delete).setEnabled(false);
+                }
+            });
+            helper.getView(R.id.collect).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    for(int i = 0; i < collectionsList.size(); i++) {
+                        if (item.getId() == collectionsList.get(i).getId()) {
+                            Toast.makeText(MainActivity.this, "已添加", Toast.LENGTH_SHORT).show();
+                            EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
+                            easySwipeMenuLayout.resetStatus();
+                            return;
+                        }
+                    }
+                    collectionsList.add(item);
+                    collectionadapter.notifyItemInserted(0);
+                    collectionadapter.notifyDataSetChanged();
+                    Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                    EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
+                    easySwipeMenuLayout.resetStatus();
+                }
+            });
+        }
+
+    }
+    public class CollectionsBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<itemsArrayClass,BaseViewHolder> {
+
+        public CollectionsBaseRecyclerViewAdapter(int layoutResId, List<itemsArrayClass> data) {
+            super(R.layout.collecitons, data);
+        }
+
+        @Override
+        protected void convert(final BaseViewHolder helper, final itemsArrayClass item) {
+            helper.setText(R.id.FigureName,item.getName());
+            helper.getView(R.id.delete).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int i = 0;
+                    for (; i < collectionsList.size(); i++) {
+                        if (collectionsList.get(i).getId() == item.getId()) {
+                            break;
+                        }
+                    }
+                    collectionsList.remove(i);
+                    collectionadapter.notifyItemRemoved(i);
                     Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
                     EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
                     easySwipeMenuLayout.resetStatus();
@@ -225,7 +358,5 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
-
-
 
 }
