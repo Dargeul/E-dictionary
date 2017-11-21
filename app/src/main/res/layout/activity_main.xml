@@ -10,11 +10,19 @@
 
     <SearchView
         android:id="@+id/searchView"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:iconifiedByDefault="false"
-        android:queryHint="请输入搜索内容"
-        />
+        android:queryHint="请输入搜索内容" />
+
+    <Button
+        android:id="@+id/BtnPlayorPause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/edit"
+        android:text="PLAY"
+        app:layout_constraintRight_toRightOf="parent"/>
+
     <!--<ListView-->
         <!--android:id="@+id/listView"-->
         <!--android:layout_width="wrap_content"-->
