@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
                         .create();
                 alertDialog.show();
             } else if (resultCode == DetailActivity.DETAIL_INFO) {
+                collectionsList.clear();
                 initList();
             }
         }
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
         PersonrecycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
         Personadapter = new PersonBaseRecyclerViewAdapter(R.layout.figure, PersonList);
-
+        Log.e("8number", PersonList.get(7).getName());
 
         PersonrecycleView.setLayoutManager(new LinearLayoutManager(this));
         Personadapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
@@ -429,6 +430,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void convert(final BaseViewHolder helper, final Person item) {
+            helper.setText(R.id.FigureName,item.getName());
+            helper.setImageResource(R.id.Avatar, ImageAdapter.mThumIds[item.avatarIndex]);
+            helper.setText(R.id.FigureNation,item.country);
+            helper.setText(R.id.FigureTitle,item.birthplace);
+            helper.setText(R.id.FigureIntro,item.nickName);
             helper.setText(R.id.FigureName,item.getName());
             helper.getView(R.id.delete).setOnClickListener(new View.OnClickListener() {
                 @Override

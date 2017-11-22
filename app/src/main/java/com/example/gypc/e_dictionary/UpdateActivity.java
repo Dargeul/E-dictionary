@@ -219,7 +219,6 @@ public class UpdateActivity extends AppCompatActivity {
         bundle.putInt("startYear", startYearVal);
         bundle.putInt("endYear", endYearVal);
         bundle.putString("birthplace", birthplace);
-
         syncData(bundle);
         bundle.putInt("personId", personId);
         goBackFromPage(bundle);
