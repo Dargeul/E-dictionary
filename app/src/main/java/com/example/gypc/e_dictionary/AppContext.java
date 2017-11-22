@@ -26,8 +26,6 @@ public class AppContext extends Application {
         instance = this;
         personDBDao = PersonDBDao.getInstance(this);
         personCollectorDBDao = PersonCollectorDBDao.getInstance(this);
-        globalPersonsList = personDBDao.getPersons();
-        globalPersonIdsCollectedList = personCollectorDBDao.getPersonIds();
     }
 
     public static AppContext getInstance() {
@@ -36,11 +34,13 @@ public class AppContext extends Application {
 
     // 获取全局初始人物数组
     public List<Person> getGlobalPersonsList() {
+        globalPersonsList = personDBDao.getPersons();
         return globalPersonsList;
     }
 
     // 获取收藏人物ID数组
     public List<Integer> getGlobalPersonIdsCollectedList() {
+        globalPersonIdsCollectedList = personCollectorDBDao.getPersonIds();
         return globalPersonIdsCollectedList;
     }
 
