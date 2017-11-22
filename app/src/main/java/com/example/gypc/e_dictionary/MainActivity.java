@@ -406,6 +406,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(MainActivity.this, DetailActivity.class);
                     Bundle bundle = new Bundle();
+                    bundle.putBoolean("toAdd", false);
                     bundle.putInt("personId", item.getId());  // 人物在数据库中Id
                     bundle.putString("name", item.getName());  // 人物名字
                     bundle.putString("country", item.country); // 人物国籍
