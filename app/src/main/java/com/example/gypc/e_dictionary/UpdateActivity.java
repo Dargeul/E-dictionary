@@ -196,9 +196,10 @@ public class UpdateActivity extends AppCompatActivity {
             return;
         }
         if (MainActivity.personNameExists(name)) {
-            if (toAdd || !name.equals(personName))
+            if (toAdd || !name.equals(personName)) {
                 showConfirmError("姓名已经存在！");
-            return;
+                return;
+            }
         }
 
         Bundle bundle = new Bundle();
