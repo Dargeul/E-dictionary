@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,10 +12,11 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * Created by gypc on 2017/11/7.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -26,6 +28,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView startYear;
     private TextView endYear;
     private int avatarIndex;
+    private int personId;
     private Button back;
     private ImageView edit;
     private ImageView collect;
@@ -70,6 +73,25 @@ public class DetailActivity extends AppCompatActivity {
                 startActivityForResult(intent, EDITUSER_REQUEST_CODE);  // 跳转到Update页面
             }
         });
+        collect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Integer> collectionIdList = new ArrayList<>();
+                collectionIdList  = AppContext.getInstance().getGlobalPersonIdsCollectedList();
+                for (Integer index : collectionIdList) {
+                    if (index == personId) {
+                        Toast.makeText(DetailActivity.this, "exist", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                PersonCollectorDBDao personCollectorDBDao = AppContext.getInstance().getPersonCollectorDBDao();
+                if (personCollectorDBDao.addPersonId(personId))  {
+                    Toast.makeText(DetailActivity.this, "success", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(DetailActivity.this, "error", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void initData(Bundle dataBundle) {
@@ -80,6 +102,8 @@ public class DetailActivity extends AppCompatActivity {
         startYear.setText(String.format("%d", dataBundle.getInt("startYear")));
         endYear.setText(String.format("%d", dataBundle.getInt("endYear")));
         avatarImageView.setImageResource(ImageAdapter.mThumIds[dataBundle.getInt("avatarIndex")]);
+        personId = dataBundle.getInt("personId");
+        Log.e("personID", String.format("%d", personId));
     }
 
     @Override

@@ -42,21 +42,16 @@ public class MainActivity extends AppCompatActivity {
     public static final int ADDUSER_REQUEST_CODE = 1;
     public static final int USERINFO_REQUEST_CODE = 1;
 
-
     private SearchView mSearchView;
 
-
-
-
-    // test
     private static List<Person> PersonList;
     private PersonBaseRecyclerViewAdapter Personadapter;
-
     private List<Person> collectionsList = new ArrayList<>();
     private CollectionsBaseRecyclerViewAdapter collectionadapter;
 
     private RecyclerView PersonrecycleView;
     private RecyclerView collectionsrecycleView;
+
     private int status = 0;
     // 0 for persons view
     // 1 for collections view
@@ -71,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initData();
         initList();
-
-
     }
 
     @Override
@@ -137,16 +130,12 @@ public class MainActivity extends AppCompatActivity {
 
         PersonrecycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
         Personadapter = new PersonBaseRecyclerViewAdapter(R.layout.figure, PersonList);
-        Log.e("8number", PersonList.get(7).getName());
+
 
         PersonrecycleView.setLayoutManager(new LinearLayoutManager(this));
         Personadapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         Personadapter.isFirstOnly(false);
         Personadapter.setDuration(500);
-
-
-
-
         PersonrecycleView.setAdapter(Personadapter);
 
         List<Integer> collectionIdList = new ArrayList<>();
@@ -168,40 +157,13 @@ public class MainActivity extends AppCompatActivity {
         collectionadapter.isFirstOnly(false);
         collectionadapter.setDuration(500);
         collectionsrecycleView.setAdapter(collectionadapter);
-
-
-
     }
+
     private void initData() {
         menuBtn = (FloatingActionsMenu)findViewById(R.id.menuBtn);
         addPersonBtn = (FloatingActionButton)findViewById(R.id.addPersonBtn);
         switchToCollectorBtn = (FloatingActionButton)findViewById(R.id.switchToCollectorBtn);
         mSearchView = (SearchView) findViewById(R.id.searchView);
-
-
-//        mListView = (ListView) findViewById(R.id.listView);
-//
-//        mListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mStrs));
-//        mListView.setTextFilterEnabled(true);
-
-//                bundle.putInt("personId", 666);  // 人物在数据库中Id
-//                bundle.putString("name", "孙权");  // 人物名字
-//                bundle.putString("country", "吴"); // 人物国籍
-//                bundle.putString("nickName", "阿权");  // 人物称号
-//                bundle.putInt("startYear", 222);  // 人物生年
-//                bundle.putInt("endYear", 333);  // 人物卒年
-//                bundle.putString("birthplace", "浙江");  // 人物籍贯
-//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-//        PersonList.add(new Person(0, "孙权", "吴", "阿权", 222, 333, "浙江"));
-
-
-
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // 当点击搜索按钮时触发该方法
             @Override
@@ -241,17 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 // 测试代码
                 Intent intent = new Intent(MainActivity.this, UpdateActivity.class);
                 Bundle bundle = new Bundle();
-
                 bundle.putBoolean("toAdd", true);  // 如果是添加新人物则为true，添加新人物只需要在bundle中添加此项
-//
-//                bundle.putInt("personId", 666);  // 人物在数据库中Id
-//                bundle.putString("name", "孙权");  // 人物名字
-//                bundle.putString("country", "吴"); // 人物国籍
-//                bundle.putString("nickName", "阿权");  // 人物称号
-//                bundle.putInt("startYear", 222);  // 人物生年
-//                bundle.putInt("endYear", 333);  // 人物卒年
-//                bundle.putString("birthplace", "浙江");  // 人物籍贯
-
                 intent.putExtras(bundle);
                 startActivityForResult(intent, ADDUSER_REQUEST_CODE);  // 跳转到Update页面
             }
@@ -303,31 +255,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected  void convert(final BaseViewHolder helper, final Person item) {
-//            Bundle dataBundle = getIntent().getExtras();
-//            toAdd = dataBundle.getBoolean("toAdd");
-//            if (!toAdd) {
-//                personId = dataBundle.getInt("personId");
-//                avatarIndex = dataBundle.getInt("avatarIndex");
-//                avatarImageView.setImageResource(ImageAdapter.mThumIds[avatarIndex]);
-//                personName = dataBundle.getString("name");
-//                nameEditText.setText(personName);
-//                String country = dataBundle.getString("country");
-//                switch (country) {
-//                    case "魏":
-//                        countryRadioGroup.check(R.id.weiRadioBtn);
-//                        break;
-//                    case "蜀":
-//                        countryRadioGroup.check(R.id.shuRadioBtn);
-//                        break;
-//                    case "吴":
-//                        countryRadioGroup.check(R.id.wuRadioBtn);
-//                        break;
-//                }
-//                nickNameEditText.setText(dataBundle.getString("nickName"));
-//                startYear.setText(String.valueOf(dataBundle.getInt("startYear")));
-//                endYear.setText(String.valueOf(dataBundle.getInt("endYear")));
-//                birthplaceEditText.setText(dataBundle.getString("birthplace"));
-//            }
+
             helper.setText(R.id.FigureName,item.getName());
             helper.setImageResource(R.id.Avatar, ImageAdapter.mThumIds[item.avatarIndex]);
             helper.setText(R.id.FigureNation,item.country);
