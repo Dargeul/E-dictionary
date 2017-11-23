@@ -29,7 +29,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView endYear;
     private int avatarIndex;
     private int personId;
-    private Button back;
+    private ImageView back;
     private ImageView edit;
     private ImageView collect;
     private Bundle bundleFromList;
@@ -43,7 +43,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void initPage() {
-        back = (Button) findViewById(R.id.backToList);
+        back = (ImageView) findViewById(R.id.backToList);
         edit = (ImageView) findViewById(R.id.edit);
         collect = (ImageView) findViewById((R.id.collect));
 

@@ -16,4 +16,11 @@
     <style name="yearTextViewStyle">
         <item name="android:background">@drawable/textview_bottom_border</item>
     </style>
+    
+    <style name="detailViewStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textAlignment">viewEnd</item>
+    </style>
 </resources>

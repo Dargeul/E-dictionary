@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionsMenu menuBtn;
     private FloatingActionButton addPersonBtn;
     private FloatingActionButton switchToCollectorBtn;
-    private Button btnPlayOrPause;
+    private ImageView btnPlayOrPause;
     public static final int ADDUSER_REQUEST_CODE = 1;
     public static final int USERINFO_REQUEST_CODE = 1;
     private static boolean hasPermission = false;
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             vertifyStoragePermissions(MainActivity.this);
         }
         RecyclerView recycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
-        btnPlayOrPause = (Button) findViewById(R.id.BtnPlayorPause);
+        btnPlayOrPause = (ImageView) findViewById(R.id.BtnPlayorPause);
 
         bindServiceConnection();
         musicListener();
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
         collectionsrecycleView  = (RecyclerView) findViewById(R.id.ListOfCollections);
         collectionadapter = new CollectionsBaseRecyclerViewAdapter(R.layout.collections, collectionsList);
-        collectionsrecycleView.setLayoutManager(new LinearLayoutManager(this));
+        collectionsrecycleView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.HORIZONTAL));
         collectionadapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
         collectionadapter.isFirstOnly(false);
         collectionadapter.setDuration(500);
@@ -347,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
                     }
-                        // 人物delete接口
+                    // 人物delete接口
 
                     EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
                     easySwipeMenuLayout.resetStatus();
@@ -471,12 +472,12 @@ public class MainActivity extends AppCompatActivity {
                 //  由tag的变换来控制事件的调用
                 if (musicService.tag != true) {
                     // 开始播放音乐并设置按钮和状态显示
-                    btnPlayOrPause.setText("PAUSE");
+                    btnPlayOrPause.setImageResource(R.mipmap.pause);
                     musicService.playOrPause();
                     musicService.tag = true;
                 } else {
                     // 暂停播放音乐并设置按钮和状态显示
-                    btnPlayOrPause.setText("PLAY");
+                    btnPlayOrPause.setImageResource(R.mipmap.play);
                     musicService.playOrPause();
                     musicService.tag = false;
                 }

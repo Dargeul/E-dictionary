@@ -1,164 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
-    tools:context="com.example.gypc.e_dictionary.DetailActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/edit"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:src="@mipmap/edit"/>
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorToolBar"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-    <ImageView
-        android:id="@+id/collect"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@mipmap/empty_star"
-        app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/shape"
-        app:layout_constraintBottom_toBottomOf="@+id/Avatar"/>
-
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@mipmap/example"
-        android:id="@+id/Avatar"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit"/>
-
-    <!--详细信息可以有两种实现，一种是listview-->
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Avatar"
-        android:id="@+id/ListOfDetails"
-        android:visibility="invisible"
-        >
-    </ListView>
-
-    <!--详细信息可以有两种实现，另一种是暴力实现，已设置invisible-->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/Avatar"
-        android:visibility="visible">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="姓名"/>
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="诸葛亮"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="势力"/>
-            <TextView
-                android:id="@+id/country"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="蜀国"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="称号"/>
-            <TextView
-                android:id="@+id/nickName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="聪明绝顶"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="生卒"/>
-            <TextView
-                android:id="@+id/startYear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="1223"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text=" - "/>
-            <TextView
-                android:id="@+id/endYear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text="1268"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="籍贯"/>
-            <TextView
-                android:id="@+id/birthplace"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="20dp"
-                android:text="江东"/>
-        </LinearLayout>
-        <Button
+        <ImageView
             android:id="@+id/backToList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BACK"/>
-    </LinearLayout>
+            android:text="BACK"
+            android:src="@mipmap/back"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="#fff"
+            android:layout_gravity = "center"
+            android:text="@string/title"/>
 
-</android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:id="@+id/ImvPlayorPause"
+                android:layout_gravity="end"
+                android:layout_margin="5dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/play"/>
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.CardView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_margin="20dp"
+        android:layout_gravity="center_vertical"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardElevation="@dimen/cardview_compat_inset_shadow"
+        app:cardBackgroundColor="@color/cardview_light_background">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/avatar1"
+                    android:id="@+id/Avatar"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_gravity="center"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/Avatar">
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:id="@+id/edit"
+                        android:src="@mipmap/edit" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dp"
+                        android:text="编辑"
+                        android:textColor="@color/colorToolBar"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#40BEBEBE"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:id="@+id/collect"
+                    android:layout_gravity="right"
+                    android:src="@mipmap/collect"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="4dp"
+                    android:textColor="@color/colorToolBar"
+                    android:text="收藏"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="20dp"
+                app:layout_constraintTop_toBottomOf="@+id/Avatar"
+                android:layout_gravity="center_horizontal">
+                <LinearLayout
+                    android:id="@+id/_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <TextView
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    style="@style/detailViewStyle"
+                    android:text="姓名"/>
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    style="@style/detailViewStyle"
+                    android:text="诸葛亮"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/_2"
+                    app:layout_constraintTop_toBottomOf="@+id/_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        style="@style/detailViewStyle"
+                        android:text="势力"/>
+                    <TextView
+                        android:id="@+id/country"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        style="@style/detailViewStyle"
+                        android:text="蜀国"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/_3"
+                        app:layout_constraintTop_toBottomOf="@id/_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="48dp"
+                            android:layout_height="wrap_content"
+                            style="@style/detailViewStyle"
+                            android:text="称号"/>
+                        <TextView
+                            android:id="@+id/nickName"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            style="@style/detailViewStyle"
+                            android:text="聪明绝顶"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/_4"
+                        app:layout_constraintTop_toBottomOf="@id/_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="48dp"
+                            android:layout_height="wrap_content"
+                            style="@style/detailViewStyle"
+                            android:text="生卒"/>
+
+                        <TextView
+                            android:id="@+id/startYear"
+                            android:layout_width="46dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textSize="20dp"
+                            android:textAlignment="viewEnd"
+                            android:text="223"/>
+
+                        <TextView
+                            android:layout_width="22dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textSize="20dp"
+                            android:textAlignment="viewEnd"
+                            android:text=" - "/>
+
+                        <TextView
+                            android:id="@+id/endYear"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textSize="20dp"
+                            android:textAlignment="viewEnd"
+                            android:text="268"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/_5"
+                        app:layout_constraintTop_toBottomOf="@id/_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="48dp"
+                            android:layout_height="wrap_content"
+                            style="@style/detailViewStyle"
+                            android:text="籍贯"/>
+                        <TextView
+                            android:id="@+id/birthplace"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            style="@style/detailViewStyle"
+                            android:text="江东"/>
+                    </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>
