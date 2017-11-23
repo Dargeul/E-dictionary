@@ -1,9 +1,17 @@
 package com.example.gypc.e_dictionary;
+import android.Manifest;
+import android.app.Activity;
 import android.app.SearchManager;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
@@ -39,11 +47,42 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionsMenu menuBtn;
     private FloatingActionButton addPersonBtn;
     private FloatingActionButton switchToCollectorBtn;
+    private Button btnPlayOrPause;
     public static final int ADDUSER_REQUEST_CODE = 1;
     public static final int USERINFO_REQUEST_CODE = 1;
-
+    private static boolean hasPermission = false;
     private SearchView mSearchView;
 
+    private ListView mListView;
+
+    private MusicService musicService;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    //  保持与Service通信
+    private void bindServiceConnection() {
+        Intent intent = new Intent(MainActivity.this, MusicService.class);
+        startService(intent);
+        bindService(intent, serviceConnection, this.BIND_AUTO_CREATE);
+    }
+
+    // 绑定Activity与Service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            musicService = ((MusicService.MyBinder)(service)).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicService = null;
+        }
+    };
+
+    // test
     private static List<Person> PersonList;
     private PersonBaseRecyclerViewAdapter Personadapter;
     private List<Person> collectionsList = new ArrayList<>();
@@ -65,6 +104,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initData();
+        if (hasPermission == false) {
+            vertifyStoragePermissions(MainActivity.this);
+        }
+        RecyclerView recycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
+        btnPlayOrPause = (Button) findViewById(R.id.BtnPlayorPause);
+
+        bindServiceConnection();
+        musicListener();
         initList();
     }
 
@@ -74,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
         // Activity销毁时断开数据库连接
         personDBDao.closeDBConnection();
         personCollectorDBDao.closeDBConnection();
+        //unbindService(serviceConnection);
+        //Intent intent = new Intent(MainActivity.this, MusicService.class);
+        //stopService(intent);
     }
 
     @Override
@@ -412,5 +462,39 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    private void musicListener() {
+        btnPlayOrPause.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //  由tag的变换来控制事件的调用
+                if (musicService.tag != true) {
+                    // 开始播放音乐并设置按钮和状态显示
+                    btnPlayOrPause.setText("PAUSE");
+                    musicService.playOrPause();
+                    musicService.tag = true;
+                } else {
+                    // 暂停播放音乐并设置按钮和状态显示
+                    btnPlayOrPause.setText("PLAY");
+                    musicService.playOrPause();
+                    musicService.tag = false;
+                }
+            }
+        });
+    }
+
+    // 获取读取系统文件权限
+    public static void vertifyStoragePermissions(Activity activity) {
+        try {
+            int permission = ActivityCompat.checkSelfPermission(activity, "android.permission.READ_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+            } else {
+                hasPermission = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
