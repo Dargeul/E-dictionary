@@ -8,13 +8,14 @@
     tools:context="com.example.gypc.e_dictionary.DetailActivity">
 
     <ImageView
+        android:id="@+id/edit"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:id="@+id/Editing"
         app:layout_constraintRight_toRightOf="parent"
         android:src="@mipmap/edit"/>
 
     <ImageView
+        android:id="@+id/collect"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@mipmap/empty_star"
@@ -29,7 +30,7 @@
         android:id="@+id/Avatar"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Editing"/>
+        app:layout_constraintTop_toBottomOf="@+id/edit"/>
 
     <!--详细信息可以有两种实现，一种是listview-->
     <ListView
@@ -38,7 +39,9 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Avatar"
-        android:id="@+id/ListOfDetails">
+        android:id="@+id/ListOfDetails"
+        android:visibility="invisible"
+        >
     </ListView>
 
     <!--详细信息可以有两种实现，另一种是暴力实现，已设置invisible-->
@@ -48,7 +51,7 @@
         android:orientation="vertical"
         android:layout_margin="10dp"
         app:layout_constraintTop_toBottomOf="@+id/Avatar"
-        android:visibility="invisible">
+        android:visibility="visible">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,6 +63,7 @@
                 android:textSize="20dp"
                 android:text="姓名"/>
             <TextView
+                android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -77,6 +81,7 @@
                 android:textSize="20dp"
                 android:text="势力"/>
             <TextView
+                android:id="@+id/country"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -94,6 +99,7 @@
                 android:textSize="20dp"
                 android:text="称号"/>
             <TextView
+                android:id="@+id/nickName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -111,11 +117,23 @@
                 android:textSize="20dp"
                 android:text="生卒"/>
             <TextView
+                android:id="@+id/startYear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:textSize="20dp"
-                android:text="1223-1268"/>
+                android:text="1223"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text=" - "/>
+            <TextView
+                android:id="@+id/endYear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="1268"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -128,13 +146,18 @@
                 android:textSize="20dp"
                 android:text="籍贯"/>
             <TextView
+                android:id="@+id/birthplace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:textSize="20dp"
                 android:text="江东"/>
         </LinearLayout>
-
+        <Button
+            android:id="@+id/backToList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BACK"/>
     </LinearLayout>
 
 
