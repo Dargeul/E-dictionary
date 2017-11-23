@@ -196,9 +196,10 @@ public class UpdateActivity extends AppCompatActivity {
             return;
         }
         if (MainActivity.personNameExists(name)) {
-            if (toAdd || !name.equals(personName))
+            if (toAdd || !name.equals(personName)) {
                 showConfirmError("姓名已经存在！");
-            return;
+                return;
+            }
         }
 
         Bundle bundle = new Bundle();
@@ -219,7 +220,6 @@ public class UpdateActivity extends AppCompatActivity {
         bundle.putInt("startYear", startYearVal);
         bundle.putInt("endYear", endYearVal);
         bundle.putString("birthplace", birthplace);
-
         syncData(bundle);
         bundle.putInt("personId", personId);
         goBackFromPage(bundle);

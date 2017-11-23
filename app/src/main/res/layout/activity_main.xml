@@ -32,14 +32,21 @@
         <!--/>-->
 
     <!--存放人物的RecyclerView，id是ListOfFigures-->
-    <android.support.v7.widget.RecyclerView
-        xmlns:android = "http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/ListOfFigures"
-        app:layout_constraintTop_toBottomOf="@+id/searchView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:paddingBottom="50dp"
-    />
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ListOfCollections"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingBottom="50dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="parent" />
 
 
     <!--存放收藏夹人物的RecyclerView，其条目样式可用figure.xml-->

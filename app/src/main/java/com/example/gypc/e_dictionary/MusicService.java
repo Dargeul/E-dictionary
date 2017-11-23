@@ -18,7 +18,7 @@ public class MusicService extends Service {
     public MusicService() {
         mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource("/storage/emulated/0/Music/melt.mp3");
+            mediaPlayer.setDataSource("/storage/emulated/0/Music/sanguozhi1-02.m4a");
             mediaPlayer.prepare();
             mediaPlayer.setLooping(true);
         } catch (Exception e) {
