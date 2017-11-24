@@ -17,6 +17,8 @@ import android.widget.NumberPicker;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 /**
  * Created by gypc on 2017/11/7.
  */
@@ -44,6 +46,9 @@ public class UpdateActivity extends AppCompatActivity {
     public static final int OP_SUCCESS = 1;
     public static final int AVATAR_PICKER_REQUEST_CODE = 2;
     private int personId;
+    private String personName;
+
+    private PersonDBDao personDBDao;
 
 
     protected void onCreate(Bundle savedInstanceState){
@@ -52,6 +57,12 @@ public class UpdateActivity extends AppCompatActivity {
 
         initData();
         initPage();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        personDBDao.closeDBConnection();
     }
 
     @Override
@@ -121,17 +132,40 @@ public class UpdateActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private int syncData(Bundle dataBundle) {
+    private void syncData(Bundle dataBundle) {
         if (toAdd) {
-            // insert to database
-            return 123;
+            if (!personDBDao.addPerson(dataBundle)) {
+                Log.e("UpdateActivity", "syncData error: cannot add person");
+                personId = -1;
+            } else {
+                personId = personDBDao.queryPersonIdByName(dataBundle.getString("name"));
+            }
         } else {
-            // update database
-            return -1;
+            if (!personDBDao.updatePerson(personId, dataBundle)) {
+                Log.e("UpdateActivity", "syncData error: update person error");
+            }
         }
     }
 
-    private void goBackFromPage(Bundle bundle) {
+    private void goBackFromPage(final Bundle bundle) {
+        // test
+        String msg = "";
+        ArrayList<Person> list = personDBDao.getPersons();
+
+        for (int i = 0; i < list.size(); i++) {
+            Person person = list.get(i);
+            msg += String.valueOf(person.personId) + " ";
+            msg += String.valueOf(person.avatarIndex) + " ";
+            msg += person.name + " ";
+            msg += person.country + " ";
+            msg += person.nickName + " ";
+            msg += String.valueOf(person.startYear) + " ";
+            msg += String.valueOf(person.endYear) + " ";
+            msg += person.birthplace + "\n";
+        }
+        Log.i("showDB", msg);
+        // end test
+
         Intent intent = new Intent();
         intent.putExtras(bundle);
         setResult(OP_SUCCESS, intent);
@@ -161,6 +195,13 @@ public class UpdateActivity extends AppCompatActivity {
             showConfirmError("籍贯不能为空！");
             return;
         }
+        if (MainActivity.personNameExists(name)) {
+            if (toAdd || !name.equals(personName)) {
+                showConfirmError("姓名已经存在！");
+                return;
+            }
+        }
+
         Bundle bundle = new Bundle();
         bundle.putInt("avatarIndex", avatarIndex);
         bundle.putString("name", name);
@@ -179,12 +220,7 @@ public class UpdateActivity extends AppCompatActivity {
         bundle.putInt("startYear", startYearVal);
         bundle.putInt("endYear", endYearVal);
         bundle.putString("birthplace", birthplace);
-
-        if (toAdd) {
-            personId = syncData(bundle);
-        } else {
-            syncData(bundle);
-        }
+        syncData(bundle);
         bundle.putInt("personId", personId);
         goBackFromPage(bundle);
     }
@@ -192,6 +228,7 @@ public class UpdateActivity extends AppCompatActivity {
     private void initData() {
         for (int i = 0; i <= 500; i++)
             years[i] = String.valueOf(i);
+        personDBDao = AppContext.getInstance().getPersonDBDao();
         avatarIndex = 6;
         avatarImageView = (ImageView)findViewById(R.id.Avatar);
         nameEditText = (EditText)findViewById(R.id.nameEditText);
@@ -244,7 +281,8 @@ public class UpdateActivity extends AppCompatActivity {
                 personId = dataBundle.getInt("personId");
                 avatarIndex = dataBundle.getInt("avatarIndex");
                 avatarImageView.setImageResource(ImageAdapter.mThumIds[avatarIndex]);
-                nameEditText.setText(dataBundle.getString("name"));
+                personName = dataBundle.getString("name");
+                nameEditText.setText(personName);
                 String country = dataBundle.getString("country");
                 switch (country) {
                     case "魏":

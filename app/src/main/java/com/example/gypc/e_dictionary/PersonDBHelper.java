@@ -5,19 +5,32 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.concurrent.locks.ReadWriteLock;
+
 /**
- * Created by XUJIJUN on 2017/11/18.
+ * Created by XUJIJUN on 2017/11/20.
  */
 
-public class MyDBHelper extends SQLiteOpenHelper {
+public class PersonDBHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
-    private static final String DB_NAME = "e_dictionary.db";
+    private static final String DB_NAME = "e_dictionary_person.db";
     public static final String TABLE_NAME = "Persons";
-    public static final String[] TABLE_COLS = new String[]{ "PersonId", "AvatarIndex", "Name", "Country", "NickName", "StartYear", "EndYear", "Birthplace" };
+    public final String[] TABLE_COLS = new String[]{ "PersonId", "AvatarIndex", "Name", "Country", "NickName", "StartYear", "EndYear", "Birthplace" };
 
-
-    public MyDBHelper(Context context) {
+    private PersonDBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+    }
+
+    private volatile static PersonDBHelper instance;
+    public static PersonDBHelper getInstance(Context context) {
+        if (instance == null) {
+            synchronized (PersonDBHelper.class) {
+                if (instance == null) {
+                    instance = new PersonDBHelper(context);
+                }
+            }
+        }
+        return instance;
     }
 
     @Override
@@ -35,7 +48,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
         try {
             db.execSQL(sql);
         } catch (Exception e) {
-            Log.e("MyDBHelper", "create table ERROR: ", e);
+            Log.e("PersonDBHelper", "create table ERROR: ", e);
         }
     }
 
@@ -46,7 +59,12 @@ public class MyDBHelper extends SQLiteOpenHelper {
             db.execSQL(sql);
             onCreate(db);
         } catch (Exception e) {
-            Log.e("MyDBHelper", "upgrade table ERROR: ", e);
+            Log.e("PersonDBHelper", "upgrade table ERROR: ", e);
         }
+    }
+
+    @Override
+    public synchronized void close() {
+        super.close();
     }
 }

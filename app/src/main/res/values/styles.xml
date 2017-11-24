@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -15,5 +15,12 @@
 
     <style name="yearTextViewStyle">
         <item name="android:background">@drawable/textview_bottom_border</item>
+    </style>
+    
+    <style name="detailViewStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textAlignment">viewEnd</item>
     </style>
 </resources>

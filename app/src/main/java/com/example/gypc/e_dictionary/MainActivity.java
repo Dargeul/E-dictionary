@@ -1,9 +1,19 @@
 package com.example.gypc.e_dictionary;
+import android.Manifest;
+import android.app.Activity;
 import android.app.SearchManager;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
@@ -39,56 +49,86 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionsMenu menuBtn;
     private FloatingActionButton addPersonBtn;
     private FloatingActionButton switchToCollectorBtn;
+    private ImageView btnPlayOrPause;
     public static final int ADDUSER_REQUEST_CODE = 1;
 
-
+    public static final int USERINFO_REQUEST_CODE = 1;
+    private static boolean hasPermission = false;
     private SearchView mSearchView;
 
 
-    private ListView mListView;
-    private List<itemsArrayClass> PersonList = new ArrayList<>();
-    private List<itemsArrayClass> collectionsList = new ArrayList<>();
-    private PersonBaseRecyclerViewAdapter Personadapter;
-    private CollectionsBaseRecyclerViewAdapter collectionadapter;
-    private RecyclerView PersonrecycleView;
-    private RecyclerView collectionsrecycleView;
+
     private int status = 0;
     // 0 for persons view
     // 1 for collections view
-    class itemsArrayClass {
-
-        int personId;
-        String name;
-        String country;
-        String nickName;
-        int endYear;
-        int startYear;
-        String birthplace;
-
-        itemsArrayClass(int personId, String name, String country, String nickName, int endYear, int startYear, String birthplace) {
-            this.personId = personId;
-            this.name = name;
-            this.country = country;
-            this.nickName = nickName;
-            this.endYear = endYear;
-            this.startYear = startYear;
-            this.birthplace = birthplace;
-        }
 
 
-        public String getName() {
-            return this.name;
-        }
-        public int getId() { return this.personId; }
+    private MusicService musicService;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    //  保持与Service通信
+    private void bindServiceConnection() {
+        Intent intent = new Intent(MainActivity.this, MusicService.class);
+        startService(intent);
+        bindService(intent, serviceConnection, this.BIND_AUTO_CREATE);
     }
+
+    // 绑定Activity与Service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            musicService = ((MusicService.MyBinder)(service)).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicService = null;
+        }
+    };
+
+    // test
+    private static List<Person> PersonList;
+    private PersonBaseRecyclerViewAdapter Personadapter;
+    private List<Person> collectionsList = new ArrayList<>();
+    private CollectionsBaseRecyclerViewAdapter collectionadapter;
+
+    private RecyclerView PersonrecycleView;
+    private RecyclerView collectionsrecycleView;
+
+
+    //database
+    private PersonDBDao personDBDao;
+    private PersonCollectorDBDao personCollectorDBDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initData();
         initList();
+        if (hasPermission == false) {
+            vertifyStoragePermissions(MainActivity.this);
+        }
+        RecyclerView recycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
+        btnPlayOrPause = (ImageView) findViewById(R.id.BtnPlayorPause);
 
+        bindServiceConnection();
+        musicListener();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Activity销毁时断开数据库连接
+        personDBDao.closeDBConnection();
+        personCollectorDBDao.closeDBConnection();
+        //unbindService(serviceConnection);
+        //Intent intent = new Intent(MainActivity.this, MusicService.class);
+        //stopService(intent);
     }
 
     @Override
@@ -116,79 +156,69 @@ public class MainActivity extends AppCompatActivity {
                 msg += "endYear: " + String.valueOf(endYear) + "\n";
                 msg += "birthplace: " + birthplace;
 
+                Person item = new Person(personId, avatarIndex, name, country, nickName, startYear, endYear, birthplace);
+
+                PersonList.add(item);
+                collectionadapter.notifyItemInserted(0);
+                collectionadapter.notifyDataSetChanged();
+
                 final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
                 alertDialog.setTitle("新添加人物")
                         .setMessage(msg)
                         .setPositiveButton("知道了", null)
                         .create();
                 alertDialog.show();
+            } else if (resultCode == DetailActivity.DETAIL_INFO) {
+                collectionsList.clear();
+                initList();
             }
         }
     }
     private void initList() {
+        // 获取全局初始人物数组，获取收藏人物ID数组同理
+        PersonList = AppContext.getInstance().getGlobalPersonsList();
+        personDBDao = AppContext.getInstance().getPersonDBDao();
+
+        personCollectorDBDao = AppContext.getInstance().getPersonCollectorDBDao();
+//        boolean personCollectorDBDao.addPersonId(int personId);  // 收藏
+//        boolean personCollectorDBDao.deletePersonId(int personId);  // 取消收藏
+
         PersonrecycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
         Personadapter = new PersonBaseRecyclerViewAdapter(R.layout.figure, PersonList);
+
+
         PersonrecycleView.setLayoutManager(new LinearLayoutManager(this));
         Personadapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         Personadapter.isFirstOnly(false);
         Personadapter.setDuration(500);
         PersonrecycleView.setAdapter(Personadapter);
 
+        List<Integer> collectionIdList = new ArrayList<>();
+        collectionIdList  = AppContext.getInstance().getGlobalPersonIdsCollectedList();
 
-
-        //database operation _ retrive data
-        PersonList.add(new itemsArrayClass(0, "孙权0", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(1, "孙权1", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(2, "孙权2", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(3, "孙权3", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(4, "孙权4", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(5, "孙权5", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(6, "孙权6", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(7, "孙权7", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(8, "孙权8", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(9, "孙权9", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(10, "孙权10", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(11, "孙权11", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(12, "孙权12", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(13, "孙权13", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(14, "孙权14", "吴", "阿权", 222, 333, "浙江"));
-        PersonList.add(new itemsArrayClass(15, "孙权15", "吴", "阿权", 222, 333, "浙江"));
+        for (int id: collectionIdList) {
+            for (Person item : PersonList) {
+                if (item.getId() == id) {
+                    collectionsList.add(item);
+                    break;
+                }
+            }
+        }
 
         collectionsrecycleView  = (RecyclerView) findViewById(R.id.ListOfCollections);
-        collectionadapter = new CollectionsBaseRecyclerViewAdapter(R.layout.collecitons, collectionsList);
-        collectionsrecycleView.setLayoutManager(new LinearLayoutManager(this));
+        collectionadapter = new CollectionsBaseRecyclerViewAdapter(R.layout.collections, collectionsList);
+        collectionsrecycleView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.HORIZONTAL));
         collectionadapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
         collectionadapter.isFirstOnly(false);
         collectionadapter.setDuration(500);
         collectionsrecycleView.setAdapter(collectionadapter);
-
-
-        collectionsList.add(new itemsArrayClass(0, "0孙123权", "吴", "阿权", 222, 333, "浙江"));
-        collectionsList.add(new itemsArrayClass(1, "1孙123权", "吴", "阿权", 222, 333, "浙江"));
-        collectionsList.add(new itemsArrayClass(2, "2孙123权", "吴", "阿权", 222, 333, "浙江"));
-        collectionsList.add(new itemsArrayClass(3, "3孙123权", "吴", "阿权", 222, 333, "浙江"));
-
     }
+
     private void initData() {
         menuBtn = (FloatingActionsMenu)findViewById(R.id.menuBtn);
         addPersonBtn = (FloatingActionButton)findViewById(R.id.addPersonBtn);
         switchToCollectorBtn = (FloatingActionButton)findViewById(R.id.switchToCollectorBtn);
         mSearchView = (SearchView) findViewById(R.id.searchView);
-
-
-//        mListView = (ListView) findViewById(R.id.listView);
-//
-//        mListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mStrs));
-//        mListView.setTextFilterEnabled(true);
-
-//                bundle.putInt("personId", 666);  // 人物在数据库中Id
-//                bundle.putString("name", "孙权");  // 人物名字
-//                bundle.putString("country", "吴"); // 人物国籍
-//                bundle.putString("nickName", "阿权");  // 人物称号
-//                bundle.putInt("startYear", 222);  // 人物生年
-//                bundle.putInt("endYear", 333);  // 人物卒年
-//                bundle.putString("birthplace", "浙江");  // 人物籍贯
-
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // 当点击搜索按钮时触发该方法
@@ -201,8 +231,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (!TextUtils.isEmpty(newText)){
-                    List<itemsArrayClass> temp = new ArrayList<itemsArrayClass>();
-                    for (itemsArrayClass item : PersonList) {
+                    List<Person> temp = new ArrayList<Person>();
+                    for (Person item : PersonList) {
                         String name  = item.getName();
                         if (name.indexOf(newText) != -1) {
                             temp.add(item);
@@ -229,21 +259,13 @@ public class MainActivity extends AppCompatActivity {
                 // 测试代码
                 Intent intent = new Intent(MainActivity.this, UpdateActivity.class);
                 Bundle bundle = new Bundle();
-
                 bundle.putBoolean("toAdd", true);  // 如果是添加新人物则为true，添加新人物只需要在bundle中添加此项
-//
-//                bundle.putInt("personId", 666);  // 人物在数据库中Id
-//                bundle.putString("name", "孙权");  // 人物名字
-//                bundle.putString("country", "吴"); // 人物国籍
-//                bundle.putString("nickName", "阿权");  // 人物称号
-//                bundle.putInt("startYear", 222);  // 人物生年
-//                bundle.putInt("endYear", 333);  // 人物卒年
-//                bundle.putString("birthplace", "浙江");  // 人物籍贯
-
                 intent.putExtras(bundle);
                 startActivityForResult(intent, ADDUSER_REQUEST_CODE);  // 跳转到Update页面
             }
         });
+
+
         switchToCollectorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,13 +295,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public class PersonBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<itemsArrayClass,BaseViewHolder> {
+    public class PersonBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<Person,BaseViewHolder> {
 
-        public PersonBaseRecyclerViewAdapter(int layoutResId, List<itemsArrayClass> data) {
+        public PersonBaseRecyclerViewAdapter(int layoutResId, List<Person> data) {
             super(R.layout.figure, data);
 
         }
-        public void updateList(List<itemsArrayClass> list){
+        public void updateList(List<Person> list){
             Personadapter = new PersonBaseRecyclerViewAdapter(R.layout.figure, list);
             PersonrecycleView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             Personadapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
@@ -289,8 +311,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void convert(final BaseViewHolder helper, final itemsArrayClass item) {
+        protected  void convert(final BaseViewHolder helper, final Person item) {
+
             helper.setText(R.id.FigureName,item.getName());
+            helper.setImageResource(R.id.Avatar, ImageAdapter.mThumIds[item.avatarIndex]);
+            helper.setText(R.id.FigureNation,item.country);
+            helper.setText(R.id.FigureTitle,item.birthplace);
+            helper.setText(R.id.FigureIntro,item.nickName);
             helper.getView(R.id.delete).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -301,9 +328,33 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    PersonList.remove(i);
-                    Personadapter.notifyItemRemoved(i);
-                    Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                    if (personDBDao.deletePerson(item.getId())) {
+                        PersonList.remove(i);
+                        Personadapter.notifyItemRemoved(i);
+                        for (Person collection : collectionsList) {
+                            if (item.getId() == collection.getId()) {
+                                if (personCollectorDBDao.deletePersonId(item.getId())) {
+                                    // 取消收藏
+                                    int index = 0;
+                                    for (; index < collectionsList.size(); index++) {
+                                        if (item.getId() == collectionsList.get(index).getId()) {
+                                            break;
+                                        }
+                                    }
+                                    collectionsList.remove(index);
+                                    collectionadapter.notifyItemRemoved(index);
+                                    Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                                }
+                                break;
+                            }
+                        }
+                        Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                    }
+                    // 人物delete接口
                     EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
                     easySwipeMenuLayout.resetStatus();
                     helper.getView(R.id.delete).setEnabled(false);
@@ -312,33 +363,63 @@ public class MainActivity extends AppCompatActivity {
             helper.getView(R.id.collect).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    for(int i = 0; i < collectionsList.size(); i++) {
-                        if (item.getId() == collectionsList.get(i).getId()) {
-                            Toast.makeText(MainActivity.this, "已添加", Toast.LENGTH_SHORT).show();
-                            EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
-                            easySwipeMenuLayout.resetStatus();
-                            return;
+                    if (collectionsList != null) {
+                        for(int i = 0; i < collectionsList.size(); i++) {
+                            if (item.getId() == collectionsList.get(i).getId()) {
+                                Toast.makeText(MainActivity.this, "已添加", Toast.LENGTH_SHORT).show();
+                                EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
+                                easySwipeMenuLayout.resetStatus();
+                                return;
+                            }
                         }
                     }
-                    collectionsList.add(item);
-                    collectionadapter.notifyItemInserted(0);
-                    collectionadapter.notifyDataSetChanged();
-                    Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+
+                    if (personCollectorDBDao.addPersonId(item.getId()))  {
+                        collectionsList.add(item);
+                        collectionadapter.notifyItemInserted(0);
+                        collectionadapter.notifyDataSetChanged();
+                        Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                    }
                     EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
                     easySwipeMenuLayout.resetStatus();
+                }
+            });
+            helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("toAdd", false);
+                    bundle.putInt("personId", item.getId());  // 人物在数据库中Id
+                    bundle.putString("name", item.getName());  // 人物名字
+                    bundle.putString("country", item.country); // 人物国籍
+                    bundle.putString("nickName", item.nickName);  // 人物称号
+                    bundle.putInt("startYear", item.startYear);  // 人物生年
+                    bundle.putInt("endYear", item.endYear);  // 人物卒年
+                    bundle.putString("birthplace", item.birthplace);  // 人物籍贯
+                    bundle.putInt("avatarIndex", item.avatarIndex);
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, USERINFO_REQUEST_CODE);
                 }
             });
         }
 
     }
-    public class CollectionsBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<itemsArrayClass,BaseViewHolder> {
+    public class CollectionsBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<Person,BaseViewHolder> {
 
-        public CollectionsBaseRecyclerViewAdapter(int layoutResId, List<itemsArrayClass> data) {
-            super(R.layout.collecitons, data);
+        public CollectionsBaseRecyclerViewAdapter(int layoutResId, List<Person> data) {
+            super(R.layout.collections, data);
         }
 
         @Override
-        protected void convert(final BaseViewHolder helper, final itemsArrayClass item) {
+        protected void convert(final BaseViewHolder helper, final Person item) {
+            helper.setText(R.id.FigureName,item.getName());
+            helper.setImageResource(R.id.Avatar, ImageAdapter.mThumIds[item.avatarIndex]);
+            helper.setText(R.id.FigureNation,item.country);
+            helper.setText(R.id.FigureTitle,item.birthplace);
+            helper.setText(R.id.FigureIntro,item.nickName);
             helper.setText(R.id.FigureName,item.getName());
             helper.getView(R.id.delete).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -349,14 +430,79 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    collectionsList.remove(i);
-                    collectionadapter.notifyItemRemoved(i);
-                    Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+
+                    if (personCollectorDBDao.deletePersonId(item.getId())) {
+                        // 取消收藏
+                        collectionsList.remove(i);
+                        collectionadapter.notifyItemRemoved(i);
+                        Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                    }
                     EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
                     easySwipeMenuLayout.resetStatus();
+                }
+            });
+            helper.getView(R.id.content).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("personId", item.getId());  // 人物在数据库中Id
+                    bundle.putString("name", item.getName());  // 人物名字
+                    bundle.putString("country", item.country); // 人物国籍
+                    bundle.putString("nickName", item.nickName);  // 人物称号
+                    bundle.putInt("startYear", item.startYear);  // 人物生年
+                    bundle.putInt("endYear", item.endYear);  // 人物卒年
+                    bundle.putString("birthplace", item.birthplace);  // 人物籍贯
+                    bundle.putInt("avatarIndex", item.avatarIndex);
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, USERINFO_REQUEST_CODE);
                 }
             });
         }
     }
 
+
+    public static boolean personNameExists(String personName) {
+        for (int i = 0; i < PersonList.size(); i++) {
+            if (PersonList.get(i).getName().equals(personName))
+                return true;
+        }
+        return false;
+    }
+
+    private void musicListener() {
+        btnPlayOrPause.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //  由tag的变换来控制事件的调用
+                if (musicService.tag != true) {
+                    // 开始播放音乐并设置按钮和状态显示
+                    btnPlayOrPause.setImageResource(R.mipmap.pause);
+                    musicService.playOrPause();
+                    musicService.tag = true;
+                } else {
+                    // 暂停播放音乐并设置按钮和状态显示
+                    btnPlayOrPause.setImageResource(R.mipmap.play);
+                    musicService.playOrPause();
+                    musicService.tag = false;
+                }
+            }
+        });
+    }
+
+    // 获取读取系统文件权限
+    public static void vertifyStoragePermissions(Activity activity) {
+        try {
+            int permission = ActivityCompat.checkSelfPermission(activity, "android.permission.READ_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+            } else {
+                hasPermission = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
