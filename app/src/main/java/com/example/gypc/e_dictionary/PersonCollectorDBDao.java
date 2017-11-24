@@ -74,10 +74,6 @@ public class PersonCollectorDBDao {
 
     public boolean addPersonId(int personId) {
         try {
-//            if (personIdExists(personId)) {
-//                Log.e("PersonCollectorDBDao", "addPerson error: person name exists");
-//                return false;
-//            }
             mDataBase = getDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put("PersonId", personId);
@@ -94,10 +90,6 @@ public class PersonCollectorDBDao {
 
     public boolean deletePersonId(int personId) {
         try {
-//            if (!personIdExists(personId)) {
-//                Log.e("PersonCollectorDBDao", "deletePersonId error: personId not exists");
-//                return false;
-//            }
             mDataBase = getDatabase();
             mDataBase.delete(PersonCollectorDBHelper.TABLE_NAME, "PersonId = ?", new String[] { String.valueOf(personId) });
 

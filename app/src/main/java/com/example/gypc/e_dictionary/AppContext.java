@@ -44,10 +44,12 @@ public class AppContext extends Application {
         return globalPersonIdsCollectedList;
     }
 
+    // 获取人物数据库表操作对象
     public PersonDBDao getPersonDBDao() {
         return personDBDao;
     }
 
+    // 获取人物收藏数据库表操作对象
     public PersonCollectorDBDao getPersonCollectorDBDao() {
         return personCollectorDBDao;
     }

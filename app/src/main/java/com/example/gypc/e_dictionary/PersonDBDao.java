@@ -20,11 +20,7 @@ public class PersonDBDao {
 
     private AtomicInteger mDBOpenCounter = new AtomicInteger();
     private SQLiteDatabase mDataBase;
-
-//    private Context mContext;
-//    private ReadWriteLock myLock;
     private Cursor cursor;
-//    public static final int CANNOT_ADD_PERSON_CODE = -1;
     private final int NO_PERSON_QUERY_RESULT_CODE = -1;
 
     private static PersonDBHelper myDBHelper;
@@ -62,8 +58,6 @@ public class PersonDBDao {
     }
 
     private boolean personIdExists(int personId) {
-//        myLock.readLock().lock();
-//        SQLiteDatabase db = null;
         try {
             mDataBase = getDatabase();
             cursor = mDataBase.query(PersonDBHelper.TABLE_NAME,
@@ -76,16 +70,11 @@ public class PersonDBDao {
             Log.e("PersonDBDao", "personIdExists", e);
             return false;
         } finally {
-//            if (db != null && db.isOpen())
-//                db.close();
-//            myLock.readLock().unlock();
             closeDatabase();
         }
     }
 
     public int queryPersonIdByName(String personName) {
-//        myLock.readLock().lock();
-//        SQLiteDatabase db = null;
         try {
             mDataBase = getDatabase();
             cursor = mDataBase.query(myDBHelper.TABLE_NAME,
@@ -104,9 +93,6 @@ public class PersonDBDao {
             Log.e("PersonDBDao", "queryPersonIdByName", e);
             return NO_PERSON_QUERY_RESULT_CODE;
         } finally {
-//            if (db != null && db.isOpen())
-//                db.close();
-//            myLock.readLock().unlock();
             closeDatabase();
         }
     }
@@ -116,8 +102,6 @@ public class PersonDBDao {
     }
 
     public boolean addPerson(Bundle dataBundle) {
-//        myLock.writeLock().lock();
-//        SQLiteDatabase db = null;
         try {
             mDataBase = getDatabase();
 
@@ -136,16 +120,11 @@ public class PersonDBDao {
             Log.e("PersonDBDao", "addPerson ERROR: ", e);
             return false;
         } finally {
-//            if (db != null && db.isOpen())
-//                db.close();
-//            myLock.writeLock().unlock();
             closeDatabase();
         }
     }
 
     public boolean deletePerson(int personId) {
-//        myLock.writeLock().lock();
-//        SQLiteDatabase db = null;
         try {
             mDataBase = getDatabase();
             mDataBase.delete(PersonDBHelper.TABLE_NAME, "PersonId = ?", new String[] { String.valueOf(personId) });
@@ -155,16 +134,11 @@ public class PersonDBDao {
             Log.e("PersonDBDao", "deletePerson", e);
             return false;
         } finally {
-//            if (db != null && db.isOpen())
-//                db.close();
-//            myLock.writeLock().unlock();
             closeDatabase();
         }
     }
 
     public boolean updatePerson(int personId, Bundle dataBundle) {
-//        myLock.writeLock().lock();
-//        SQLiteDatabase db = null;
         try {
             mDataBase = getDatabase();
 
@@ -183,16 +157,11 @@ public class PersonDBDao {
             Log.e("PersonDBDao", "updatePerson", e);
             return false;
         } finally {
-//            if (db != null && db.isOpen())
-//                db.close();
-//            myLock.writeLock().unlock();
             closeDatabase();
         }
     }
 
     public ArrayList<Person> getPersons() {
-//        myLock.readLock().lock();
-//        SQLiteDatabase db = null;
         try {
             ArrayList<Person> resultList = new ArrayList<>();
             mDataBase = getDatabase();
@@ -222,9 +191,6 @@ public class PersonDBDao {
             Log.e("PersonDBDao", "getPersons ERROR: ", e);
             return null;
         } finally {
-//            if (db != null && db.isOpen())
-//                db.close();
-//            myLock.readLock().unlock();
             closeDatabase();
         }
     }

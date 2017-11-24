@@ -148,24 +148,6 @@ public class UpdateActivity extends AppCompatActivity {
     }
 
     private void goBackFromPage(final Bundle bundle) {
-        // test
-        String msg = "";
-        ArrayList<Person> list = personDBDao.getPersons();
-
-        for (int i = 0; i < list.size(); i++) {
-            Person person = list.get(i);
-            msg += String.valueOf(person.personId) + " ";
-            msg += String.valueOf(person.avatarIndex) + " ";
-            msg += person.name + " ";
-            msg += person.country + " ";
-            msg += person.nickName + " ";
-            msg += String.valueOf(person.startYear) + " ";
-            msg += String.valueOf(person.endYear) + " ";
-            msg += person.birthplace + "\n";
-        }
-        Log.i("showDB", msg);
-        // end test
-
         Intent intent = new Intent();
         intent.putExtras(bundle);
         setResult(OP_SUCCESS, intent);
