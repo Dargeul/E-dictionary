@@ -79,15 +79,18 @@ public class DetailActivity extends AppCompatActivity {
                 startActivityForResult(intent, EDITUSER_REQUEST_CODE);  // 跳转到Update页面
             }
         });
-  
+
+        collect.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
+                // 根据收藏的状态动态绑定点击事件
                 PersonCollectorDBDao personCollectorDBDao = AppContext.getInstance().getPersonCollectorDBDao();
                 if (status == 1) {
                     status = 0;
                     if (personCollectorDBDao.deletePersonId(personId)) {
                         collect.setImageResource(R.mipmap.black_collect);
                         collectStatus.setText("收藏");
-                        Toast.makeText(DetailActivity.this, "success", Toast.LENGTH_SHORT).show();
+
                     } else {
                         Toast.makeText(DetailActivity.this, "error", Toast.LENGTH_SHORT).show();
                     }
@@ -105,7 +108,6 @@ public class DetailActivity extends AppCompatActivity {
                     if (personCollectorDBDao.addPersonId(personId))  {
                         collect.setImageResource(R.mipmap.collect);
                         collectStatus.setText("取消收藏");
-                        Toast.makeText(DetailActivity.this, "success", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(DetailActivity.this, "error", Toast.LENGTH_SHORT).show();
                     }
@@ -132,6 +134,7 @@ public class DetailActivity extends AppCompatActivity {
                 break;
             }
         }
+        //根据收藏的状态动态渲染页面
         if (status == 1) {
             collectStatus.setText("取消收藏");
             collect.setImageResource(R.mipmap.collect);

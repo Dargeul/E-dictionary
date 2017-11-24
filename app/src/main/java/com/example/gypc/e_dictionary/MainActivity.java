@@ -236,7 +236,6 @@ public class MainActivity extends AppCompatActivity {
                         String name  = item.getName();
                         if (name.indexOf(newText) != -1) {
                             temp.add(item);
-                            Log.e("filter", name);
                         }
                     }
                     Personadapter.updateList(temp);
@@ -295,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //人物列表的recyclerview的adapter的设置
     public class PersonBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<Person,BaseViewHolder> {
 
         public PersonBaseRecyclerViewAdapter(int layoutResId, List<Person> data) {
@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected  void convert(final BaseViewHolder helper, final Person item) {
-
+        //设定相关的页面渲染内容和绑定事件
             helper.setText(R.id.FigureName,item.getName());
             helper.setImageResource(R.id.Avatar, ImageAdapter.mThumIds[item.avatarIndex]);
             helper.setText(R.id.FigureNation,item.country);
@@ -343,18 +343,16 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     collectionsList.remove(index);
                                     collectionadapter.notifyItemRemoved(index);
-                                    Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+
                                 } else {
                                     Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                                 }
                                 break;
                             }
                         }
-                        Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                     }
-                    // 人物delete接口
                     EasySwipeMenuLayout easySwipeMenuLayout = helper.getView(R.id.es);
                     easySwipeMenuLayout.resetStatus();
                     helper.getView(R.id.delete).setEnabled(false);
@@ -378,7 +376,6 @@ public class MainActivity extends AppCompatActivity {
                         collectionsList.add(item);
                         collectionadapter.notifyItemInserted(0);
                         collectionadapter.notifyDataSetChanged();
-                        Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                     }
@@ -435,7 +432,6 @@ public class MainActivity extends AppCompatActivity {
                         // 取消收藏
                         collectionsList.remove(i);
                         collectionadapter.notifyItemRemoved(i);
-                        Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                     }
