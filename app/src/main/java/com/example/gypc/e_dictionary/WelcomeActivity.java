@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 /**
  * Created by gypc on 2017/11/21.
@@ -17,7 +18,7 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        Button buttonClickToPlay = (Button)findViewById(R.id.clickToPlay);
+        ImageView buttonClickToPlay = (ImageView)findViewById(R.id.clickToPlay);
         buttonClickToPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
