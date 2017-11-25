@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -192,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
         collectionsrecycleView  = (RecyclerView) findViewById(R.id.ListOfCollections);
         collectionadapter = new CollectionsBaseRecyclerViewAdapter(R.layout.collections, collectionsList);
-        collectionsrecycleView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.HORIZONTAL));
+        collectionsrecycleView.setLayoutManager(new GridLayoutManager(this,2));
         collectionadapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
         collectionadapter.isFirstOnly(false);
         collectionadapter.setDuration(500);
