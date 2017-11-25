@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/background"
     tools:context="com.example.gypc.e_dictionary.DetailActivity">
 
     <LinearLayout
@@ -34,14 +35,6 @@
                 android:layout_gravity = "center"
                 android:text="@string/title"/>
 
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:id="@+id/ImvPlayorPause"
-                android:layout_gravity="end"
-                android:layout_margin="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/play"/>
         </android.support.v7.widget.Toolbar>
 
         <GridView

@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -26,6 +27,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -44,6 +46,8 @@ import com.yalantis.contextmenu.lib.MenuParams;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.gypc.e_dictionary.WelcomeActivity.welcomeInstance;
+
 public class MainActivity extends AppCompatActivity {
 
     private FloatingActionsMenu menuBtn;
@@ -54,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int USERINFO_REQUEST_CODE = 1;
     private static boolean hasPermission = false;
+    private long mExitTime; //退出时的时间
     private SearchView mSearchView;
-
-
+    private TextView collectName;
 
     private int status = 0;
     // 0 for persons view
@@ -68,26 +72,6 @@ public class MainActivity extends AppCompatActivity {
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-
-    //  保持与Service通信
-    private void bindServiceConnection() {
-        Intent intent = new Intent(MainActivity.this, MusicService.class);
-        startService(intent);
-        bindService(intent, serviceConnection, this.BIND_AUTO_CREATE);
-    }
-
-    // 绑定Activity与Service
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            musicService = ((MusicService.MyBinder)(service)).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicService = null;
-        }
     };
 
     // test
@@ -114,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             vertifyStoragePermissions(MainActivity.this);
         }
         RecyclerView recycleView = (RecyclerView) findViewById(R.id.ListOfFigures);
-        btnPlayOrPause = (ImageView) findViewById(R.id.BtnPlayorPause);
+        welcomeInstance.finish();
 
         bindServiceConnection();
         musicListener();
@@ -126,9 +110,9 @@ public class MainActivity extends AppCompatActivity {
         // Activity销毁时断开数据库连接
         personDBDao.closeDBConnection();
         personCollectorDBDao.closeDBConnection();
-        //unbindService(serviceConnection);
-        //Intent intent = new Intent(MainActivity.this, MusicService.class);
-        //stopService(intent);
+        unbindService(serviceConnection);
+        Intent intent = new Intent(MainActivity.this, MusicService.class);
+        stopService(intent);
     }
 
     @Override
@@ -174,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private void initList() {
         // 获取全局初始人物数组，获取收藏人物ID数组同理
         PersonList = AppContext.getInstance().getGlobalPersonsList();
@@ -218,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
         menuBtn = (FloatingActionsMenu)findViewById(R.id.menuBtn);
         addPersonBtn = (FloatingActionButton)findViewById(R.id.addPersonBtn);
         switchToCollectorBtn = (FloatingActionButton)findViewById(R.id.switchToCollectorBtn);
+        collectName = (TextView)findViewById(R.id.collectName);
         mSearchView = (SearchView) findViewById(R.id.searchView);
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -254,7 +240,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 menuBtn.collapse();
-
                 // 测试代码
                 Intent intent = new Intent(MainActivity.this, UpdateActivity.class);
                 Bundle bundle = new Bundle();
@@ -264,12 +249,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         switchToCollectorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (status == 0) {
                     mSearchView.setVisibility(View.INVISIBLE);
+                    collectName.setVisibility(View.VISIBLE);
                     PersonrecycleView.setVisibility(View.INVISIBLE);
                     collectionsrecycleView.setVisibility(View.VISIBLE);
                     collectionadapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
@@ -280,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
                     status = 1;
                 } else {
                     mSearchView.setVisibility(View.VISIBLE);
+                    collectName.setVisibility(View.INVISIBLE);
                     PersonrecycleView.setVisibility(View.VISIBLE);
                     collectionsrecycleView.setVisibility(View.INVISIBLE);
                     Personadapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
@@ -293,10 +279,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //  保持与Service通信
+    private void bindServiceConnection() {
+        Intent intent = new Intent(MainActivity.this, MusicService.class);
+        startService(intent);
+        bindService(intent, serviceConnection, this.BIND_AUTO_CREATE);
+    }
+
+    // 绑定Activity与Service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            musicService = ((MusicService.MyBinder)(service)).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicService = null;
+        }
+    };
 
     //人物列表的recyclerview的adapter的设置
     public class PersonBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<Person,BaseViewHolder> {
-
         public PersonBaseRecyclerViewAdapter(int layoutResId, List<Person> data) {
             super(R.layout.figure, data);
 
@@ -402,10 +406,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
     }
-    public class CollectionsBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<Person,BaseViewHolder> {
 
+    public class CollectionsBaseRecyclerViewAdapter extends BaseItemDraggableAdapter<Person,BaseViewHolder> {
         public CollectionsBaseRecyclerViewAdapter(int layoutResId, List<Person> data) {
             super(R.layout.collections, data);
         }
@@ -469,6 +472,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void musicListener() {
+        btnPlayOrPause = (ImageView) findViewById(R.id.BtnPlayorPause);
         btnPlayOrPause.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -501,4 +505,24 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    //对返回键进行监听
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            exit();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void exit() {
+        if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            mExitTime = System.currentTimeMillis();
+        } else {
+            System.exit(0);
+        }
+    }
+
 }

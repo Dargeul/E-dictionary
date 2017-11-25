@@ -7,6 +7,7 @@
     android:focusable="true"
     android:orientation="vertical"
     android:focusableInTouchMode="true"
+    android:background="@drawable/background"
     tools:context="com.example.gypc.e_dictionary.MainActivity">
 
     <android.support.v7.widget.Toolbar
@@ -35,34 +36,47 @@
             android:src="@mipmap/play"/>
     </android.support.v7.widget.Toolbar>
 
-    <SearchView
-        android:id="@+id/searchView"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:iconifiedByDefault="false"
-        android:queryHint="请输入搜索内容" />
+        android:layout_height="wrap_content">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:queryHint="请输入搜索内容"></SearchView>
+
+        <TextView
+            android:id="@+id/collectName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="收藏夹"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="32sp"
+            android:visibility="invisible" />
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="10dp">
-        <!--存放人物的RecyclerView，id是ListOfFigures-->
+        android:layout_height="match_parent">
 
+        <!--存放人物的RecyclerView，id是ListOfFigures-->
         <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/ListOfFigures"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:visibility="visible" />
 
         <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/ListOfCollections"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
+            android:visibility="invisible"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="15dp"
-            android:visibility="invisible"/>
+            tools:layout_editor_absoluteX="10dp" />
+
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/menuBtn"
             android:layout_width="wrap_content"

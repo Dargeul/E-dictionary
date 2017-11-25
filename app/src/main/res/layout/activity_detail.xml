@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
@@ -29,24 +30,15 @@
             android:layout_gravity = "center"
             android:text="@string/title"/>
 
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:id="@+id/ImvPlayorPause"
-                android:layout_gravity="end"
-                android:layout_margin="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/play"/>
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.CardView
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_margin="20dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:foreground="?android:attr/selectableItemBackground"
-        app:cardElevation="@dimen/cardview_compat_inset_shadow"
-        app:cardBackgroundColor="@color/cardview_light_background">
+        app:cardBackgroundColor="@color/cardview_light_background"
+        app:cardElevation="@dimen/cardview_compat_inset_shadow">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,24 +48,26 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <ImageView
+                    android:id="@+id/Avatar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:src="@drawable/avatar1"
-                    android:id="@+id/Avatar"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    android:layout_gravity="center"/>
+                    app:layout_constraintRight_toRightOf="parent" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@+id/Avatar">
+                    app:layout_constraintBottom_toBottomOf="@+id/Avatar"
+                    app:layout_constraintLeft_toLeftOf="parent">
+
                     <ImageView
+                        android:id="@+id/edit"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:id="@+id/edit"
                         android:src="@mipmap/edit" />
 
                     <TextView
@@ -91,148 +85,160 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:background="#40BEBEBE"/>
+                android:background="#40BEBEBE" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <ImageView
+                    android:id="@+id/collect"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:id="@+id/collect"
                     android:layout_gravity="right"
-                    android:src="@mipmap/collect"/>
+                    android:src="@mipmap/collect" />
+
                 <TextView
                     android:id="@+id/collect_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="4dp"
-                    android:textColor="@color/colorToolBar"
                     android:text="收藏"
+                    android:textColor="@color/colorToolBar"
                     android:textSize="12sp" />
             </LinearLayout>
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:paddingBottom="20dp"
-                app:layout_constraintTop_toBottomOf="@+id/Avatar"
-                android:layout_gravity="center_horizontal">
+                app:layout_constraintTop_toBottomOf="@+id/Avatar">
+
                 <LinearLayout
                     android:id="@+id/_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                <TextView
-                    android:layout_width="48dp"
-                    android:layout_height="wrap_content"
-                    style="@style/detailViewStyle"
-                    android:text="姓名"/>
-                <TextView
-                    android:id="@+id/name"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    style="@style/detailViewStyle"
-                    android:text="诸葛亮"/>
+
+                    <TextView
+                        style="@style/detailViewStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:text="姓名" />
+
+                    <TextView
+                        android:id="@+id/name"
+                        style="@style/detailViewStyle"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="诸葛亮" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/_2"
-                    app:layout_constraintTop_toBottomOf="@+id/_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/_1">
+
                     <TextView
+                        style="@style/detailViewStyle"
                         android:layout_width="48dp"
                         android:layout_height="wrap_content"
-                        style="@style/detailViewStyle"
-                        android:text="势力"/>
+                        android:text="势力" />
+
                     <TextView
                         android:id="@+id/country"
+                        style="@style/detailViewStyle"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
+                        android:text="蜀国" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/_2">
+
+                    <TextView
                         style="@style/detailViewStyle"
-                        android:text="蜀国"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/_3"
-                        app:layout_constraintTop_toBottomOf="@id/_2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="48dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="48dp"
-                            android:layout_height="wrap_content"
-                            style="@style/detailViewStyle"
-                            android:text="称号"/>
-                        <TextView
-                            android:id="@+id/nickName"
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            style="@style/detailViewStyle"
-                            android:text="聪明绝顶"/>
-                    </LinearLayout>
+                        android:text="称号" />
 
-                    <LinearLayout
-                        android:id="@+id/_4"
-                        app:layout_constraintTop_toBottomOf="@id/_3"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/nickName"
+                        style="@style/detailViewStyle"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="48dp"
-                            android:layout_height="wrap_content"
-                            style="@style/detailViewStyle"
-                            android:text="生卒"/>
+                        android:text="聪明绝顶" />
+                </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/startYear"
-                            android:layout_width="46dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:textSize="20dp"
-                            android:textAlignment="viewEnd"
-                            android:text="223"/>
+                <LinearLayout
+                    android:id="@+id/_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/_3">
 
-                        <TextView
-                            android:layout_width="22dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:textSize="20dp"
-                            android:textAlignment="viewEnd"
-                            android:text=" - "/>
-
-                        <TextView
-                            android:id="@+id/endYear"
-                            android:layout_width="40dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:textSize="20dp"
-                            android:textAlignment="viewEnd"
-                            android:text="268"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/_5"
-                        app:layout_constraintTop_toBottomOf="@id/_4"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        style="@style/detailViewStyle"
+                        android:layout_width="48dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="48dp"
-                            android:layout_height="wrap_content"
-                            style="@style/detailViewStyle"
-                            android:text="籍贯"/>
-                        <TextView
-                            android:id="@+id/birthplace"
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            style="@style/detailViewStyle"
-                            android:text="江东"/>
-                    </LinearLayout>
+                        android:text="生卒" />
+
+                    <TextView
+                        android:id="@+id/startYear"
+                        android:layout_width="46dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="223"
+                        android:textAlignment="viewEnd"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:layout_width="22dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text=" - "
+                        android:textAlignment="viewEnd"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:id="@+id/endYear"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="268"
+                        android:textAlignment="viewEnd"
+                        android:textSize="20dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/_4">
+
+                    <TextView
+                        style="@style/detailViewStyle"
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:text="籍贯" />
+
+                    <TextView
+                        android:id="@+id/birthplace"
+                        style="@style/detailViewStyle"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="江东" />
+                </LinearLayout>
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

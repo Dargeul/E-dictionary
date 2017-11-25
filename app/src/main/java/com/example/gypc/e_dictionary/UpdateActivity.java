@@ -1,9 +1,12 @@
 package com.example.gypc.e_dictionary;
 
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.IntDef;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +33,7 @@ public class UpdateActivity extends AppCompatActivity {
     private EditText birthplaceEditText;
     private TextView startYear;
     private TextView endYear;
+    private ImageView back;
     private NumberPicker dialogYearPicker;
     private Button confirmBtn;
     private RadioGroup countryRadioGroup;
@@ -45,16 +49,15 @@ public class UpdateActivity extends AppCompatActivity {
     private boolean toAdd;
     public static final int OP_SUCCESS = 1;
     public static final int AVATAR_PICKER_REQUEST_CODE = 2;
+    public static final int UPDATE_INFO = 3;
     private int personId;
     private String personName;
 
     private PersonDBDao personDBDao;
 
-
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
-
         initData();
         initPage();
     }
@@ -256,6 +259,15 @@ public class UpdateActivity extends AppCompatActivity {
     }
 
     private void initPage() {
+        back = (ImageView) findViewById(R.id.backToList);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UpdateActivity.this, MainActivity.class);
+                setResult(UPDATE_INFO, intent);
+                finish();
+            }
+        });
         try {
             Bundle dataBundle = getIntent().getExtras();
             toAdd = dataBundle.getBoolean("toAdd");
